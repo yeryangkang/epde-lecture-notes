@@ -1,0 +1,1 @@
+# PDE Lecture Notes. This repository contains lecture materials in English for the seminar titled "Themes and Methods in PDEs" to be given at Seoul National University in the Spring of 2026. The materials are written in LaTeX and are compatible with Overleaf.
