@@ -1,0 +1,192 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\geometry{left=25mm, right=25mm, top=30mm, bottom=30mm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{PDE Seminar: Day 5 \\ ABP Estimates}
+\author{Yeryang Kang}
+\date{February 13, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction: The Need for Strong Solutions}
+
+In previous sessions, we discussed Schauder theory, and the following contrast holds:
+\begin{itemize}
+    \item \textbf{Classical Solutions ($C^{2,\alpha}$):} Require coefficients $a^{ij}$ to be Hölder continuous (Schauder Theory).
+    \item \textbf{Weak Solutions ($H^1$):} Require divergence form structure $D_i(a^{ij}D_j u) = f$.
+\end{itemize}
+
+What if the operator is in \textbf{non-divergence form} ($a^{ij}D_{ij}u = f$) but the coefficients are \textbf{only continuous ($C^0$)} or merely bounded ($L^\infty$)? In this case, classical derivatives may not exist everywhere.
+We seek a solution $u \in W^{2,p}_{loc}(\Omega)$ that satisfies the equation "almost everywhere (a.e.)". This is called a \textbf{Strong Solution}.
+
+
+\section{Geometric Tools for ABP Estimate}
+
+To bound strong solutions without $C^2$ regularity, we replace the classical "Maximum Principle" with a geometric measure theory approach.
+
+\begin{definition}[Upper Contact Set]
+The upper contact set $\Gamma^+$ of $u$ is the set of points where the tangent plane lies above the graph of $u$:
+\[
+    \Gamma^+ = \{ x \in \Omega \mid u(y) \le u(x) + p \cdot (y-x) \text{ for some } p \in \mathbb{R}^n, \forall y \in \Omega \}.
+\]
+Basically, $\Gamma^+$ is where $u$ is "concave" (touched by a supporting hyperplane from above).
+\end{definition}
+
+\begin{definition}[Normal Mapping]
+The normal mapping (or sub-gradient) $\chi(x)$ is the set of slopes $p$ of the supporting hyperplanes at $x$. For $u \in C^2$, this is simply the gradient map:
+\[
+    \chi(E) = \{ \nabla u(x) \mid x \in E \cap \Gamma^+ \}.
+\]
+\end{definition}
+
+
+
+\section{Theorem 3.6: The ABP Estimate}
+
+The Alexandrov-Bakelman-Pucci (ABP) estimate is the fundamental $L^\infty$ bound for non-divergence operators with bounded measurable coefficients.
+
+\begin{theorem}[9.1. ABP Estimate]
+Let $Lu \geq f$ in a bounded domain $\Omega$ and $u \in C^0(\overline{\Omega}) \cap W^{2,n}_{\text{loc}}(\Omega)$. Then
+\begin{equation}
+    \sup_\Omega u \leq \sup_{\partial\Omega} u^+ + C \|f/\mathcal{D}^*\|_{L^n(\Omega)}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+This estimate links the maximum of $u$ to the measure of the "upper contact set" $\Gamma^+$, where $u$ is concave and lies below its tangent plane. By considering the image of the gradient map $\nabla u$ on $\Gamma^+$, one relates the volume of a ball (the range of the gradient) to the integral of the determinant of the Hessian (the Jacobian), which is bounded by $f$ due to the PDE.
+\end{proof}
+
+\begin{proof}
+Assume, without loss of generality, that $u \leq 0$ on $\partial\Omega$ (otherwise, replace $u$ with $u - \sup_{\partial\Omega} u^+$). Let $M = \sup_{\Omega} u > 0$.
+
+\subsection*{1. The Upper Contact Set}
+Define the \textbf{upper contact set} $\Gamma^+$ as the set where $u$ is concave and stayed "above" its supporting planes:
+\[
+\Gamma^+ = \{ x \in \Omega : u(y) \leq u(x) + \nabla u(x) \cdot (y-x) \text{ for all } y \in \Omega \}.
+\]
+For $x \in \Gamma^+$, the Hessian matrix $D^2u(x)$ is negative semi-definite, implying $-D^2u \geq 0$. From the PDE $Lu \geq f$, and assuming $L$ is the Laplacian $\Delta$ for simplicity (or a general elliptic operator with determinant $\mathcal{D}^*$), we have the following inequalities, mainly owing to arithmetic mean - geometric mean inequality :
+\[
+\frac{(-Lu)^n}{n^n \det(A)} \leq
+\det(-D^2 u) \leq \left( \frac{-\Delta u}{n} \right)^n \leq C \left| \frac{f}{\mathcal{D}^*} \right|^n.
+\]
+
+\subsection*{2. The Gradient Map}
+Consider the map $g: \Omega \to \mathbb{R}^n$ defined by $g(x) = \nabla u(x)$. 
+If $u$ attains its maximum $M$ at $x_0 \in \Omega$ and $u \leq 0$ on $\partial\Omega$, the image of the contact set under the gradient map, $g(\Gamma^+)$, must cover a ball of radius $M / \text{diam}(\Omega)$. 
+Specifically, it can be shown that:
+\[
+B_{M/d}(0) \subset \nabla u(\Gamma^+), \quad \text{where } d = \text{diam}(\Omega).
+\]
+
+\subsection*{3. Change of Variables (Integration)}
+We calculate the volume of the image $g(\Gamma^+)$ using the Jacobian of the gradient map, which is the determinant of the Hessian:
+\[
+|B_{M/d}(0)| \leq \int_{g(\Gamma^+)} dp \leq \int_{\Gamma^+} |\det(D^2 u)| dx.
+\]
+Substituting the bound from the PDE in Step 1 (A:= coefficient matrix of the elliptic operator $L$):
+\[
+\omega_n \left( \frac{M}{d} \right)^n \leq \int_{\Gamma^+} \left( \frac{f}{n (\det A)^{1/n}} \right)^n dx \leq \int_{\Omega} \frac{f^n}{n^n \mathcal{D}^*} dx.
+\]
+Taking the $n$-th root of both sides yields:
+\[
+M \leq C d \left( \int_{\Omega} \left| \frac{f}{\mathcal{D}^*} \right|^n dx \right)^{1/n}.
+\]
+This concludes the estimate: $\sup_\Omega u \leq \sup_{\partial\Omega} u^+ + C \|f/\mathcal{D}^*\|_{L^n(\Omega)}$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Theorem 3.7: $W^{2,p}$ Solvability}
+
+Using the ABP estimate (for uniqueness/bounds) and Calderon-Zygmund estimates (for regularity), we establish the existence theory.
+
+\begin{theorem}[$W^{2,p}$ Existence and Uniqueness] \label{thm:w2p}
+Let $\Omega$ be a $C^{1,1}$ domain. Suppose $a^{ij} \in C^0(\overline{\Omega})$ (continuous coefficients) and $L$ is uniformly elliptic.
+For any $f \in L^p(\Omega)$ with $p > n$, the Dirichlet problem:
+\begin{equation}
+    \begin{cases}
+        a^{ij} D_{ij} u = f & \text{in } \Omega \\
+        u = 0 & \text{on } \partial\Omega
+    \end{cases}
+\end{equation}
+has a unique strong solution $u \in W^{2,p}(\Omega)$. Furthermore,
+\[
+    \|u\|_{W^{2,p}(\Omega)} \le C \|f\|_{L^p(\Omega)}.
+\]
+\end{theorem}
+
+\subsection{Proof Strategy}
+\begin{enumerate}
+    \item \textbf{Uniqueness:} Follows immediately from the \textbf{ABP Estimate}. If $Lu=0$ (with $f=0$), then the $L^n$ norm of $f$ is 0, so $\sup |u| \le 0 \implies u \equiv 0$.
+    
+    \item \textbf{A Priori Estimates ($L^p$ estimates):} The core hard analysis relies on the \textbf{Calderon-Zygmund Theory}.
+    \begin{itemize}
+        \item For the Laplacian $\Delta u = f$, singular integral theory proves $\|D^2 u\|_{L^p} \le C \|f\|_{L^p}$.
+        \item By perturbation (since $a^{ij}$ are continuous), locally we can treat $a^{ij} \approx \text{const}$ and apply the Laplacian estimates.
+    \end{itemize}
+    
+    \item \textbf{Existence (Method of Continuity):}
+    \begin{itemize}
+        \item We connect $L$ to $\Delta$ via $L_t = (1-t)\Delta + t L$.
+        \item Since we have the global $W^{2,p}$ a priori estimate (derived from step 2 and ABP), the set of solvable $t$ is closed (similar to the Schauder proof).
+        \item Openness is shown via the contraction mapping principle using the smallness of perturbation in $L^p$.
+    \end{itemize}
+\end{enumerate}
+
+\section{Summary: Evolution of Elliptic Theory}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Feature} & \textbf{Classical (Ch. 6)} & \textbf{Weak (Ch. 8)} & \textbf{Strong (Ch. 9)} \\ \hline
+\textbf{Space} & $C^{2,\alpha}$ & $H^1 = W^{1,2}$ & $W^{2,p}$ ($p>n$) \\ \hline
+\textbf{Coefficients} & Hölder ($C^{0,\alpha}$) & Measurable ($L^\infty$) & Continuous ($C^0$) \\ \hline
+\textbf{Data ($f$)} & Hölder ($C^{0,\alpha}$) & Distributional ($H^{-1}$) & $L^p$ Space \\ \hline
+\textbf{Key Tool} & Schauder Estimates & Energy / Lax-Milgram & ABP Estimate \\ \hline
+\textbf{Method} & Potential Theory & Hilbert Space & Geometric Measure \\ \hline
+\end{tabular}
+\caption{Comparison of Solution Concepts}
+\end{table}
+
+\end{document}

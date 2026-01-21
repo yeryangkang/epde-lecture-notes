@@ -1,0 +1,353 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{array}
+
+\geometry{a4paper, margin=1in}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{example}[definition]{Example}
+\newtheorem{block}[definition]{Block}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+\title{25W PDE Seminar: Themes and Methods in PDEs}
+\author{Yeryang Kang}
+\date{Jan-Feb 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Under the overarching title \textbf{Themes and Methods in PDEs}, this seminar draft investigates the qualitative and quantitative frameworks governing second-order elliptic equations. Our discussion is structured around three core methodological pillars:
+
+\begin{itemize}
+    \item \textbf{The Method of Comparison (Ch. 3):} We establish the Weak and Strong Maximum Principles, which utilize barrier functions and the Hopf Lemma to demonstrate the geometric rigidity inherent in elliptic operators.
+    \item \textbf{Classical Perturbation Theory (Ch. 6):} We examine the Schauder estimates, where the method of "freezing coefficients" allows us to bootstrap local regularity into global $C^{2,\alpha}$ solvability via the Method of Continuity.
+    \item \textbf{Geometric Measure Methods (Ch. 9):} We transition to the study of strong solutions ($W^{2,n}$) in non-divergence form. Here, the primary method is the Alexandrov-Bakelman-Pucci (ABP) estimate, which relates the supremum of a solution to the measure of its contact set through the normal mapping.
+\end{itemize}
+
+By comparing these chapters, we illustrate how the definition of a "solution" evolves alongside the methods used to bound it, providing a comprehensive overview of modern elliptic theory.
+
+
+\section{Prerequisites (Minimal Background)}
+
+In this section, we establish the foundational functional analytic framework required to discuss the existence and regularity of solutions to second-order elliptic partial differential equations.
+
+\subsection*{(*) Lebesgue Spaces $L^p$}
+
+\begin{definition}
+For $1 \le p < \infty$, the Lebesgue space on a domain $\Omega \subseteq \mathbb{R}^n$ is defined as:
+\[
+L^p(\Omega) := \left\{ u \text{ measurable} : \int_\Omega |u|^p \, dx < \infty \right\},
+\quad
+\|u\|_{L^p} := \left(\int_\Omega |u|^p \, dx \right)^{1/p}.
+\]
+For $p=\infty$, we use the essential supremum norm.
+\end{definition}
+
+\begin{remark}
+$L^p$ spaces provide the \emph{ambient scale} for defining weak derivatives and establishing energy estimates. They allow us to treat functions as elements of a Banach space.
+\end{remark}
+
+\begin{theorem}[Hölder Inequality]
+Let $1 \le p, q \le \infty$ be conjugate exponents such that $\frac{1}{p} + \frac{1}{q} = 1$. If $f \in L^p(\Omega)$ and $g \in L^q(\Omega)$, then:
+\[
+\int_\Omega |fg| \, dx \le \|f\|_{L^p} \|g\|_{L^q}.
+\]
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof relies on Young's inequality: $ab \le \frac{a^p}{p} + \frac{b^q}{q}$ for $a, b \ge 0$. 
+\begin{enumerate}
+    \item Normalize $f$ and $g$ such that $\|f\|_{L^p} = 1$ and $\|g\|_{L^q} = 1$.
+    \item Apply Young's inequality pointwise: $|f(x)g(x)| \le \frac{|f(x)|^p}{p} + \frac{|g(x)|^q}{q}$.
+    \item Integrate over $\Omega$ to obtain $\int |fg| \le \frac{1}{p} + \frac{1}{q} = 1$.
+    \item Rescale by the original norms to conclude the general case.
+\end{enumerate}
+\end{proof}
+
+\subsection*{(*) Weak Derivatives and Sobolev Spaces}
+
+\begin{definition}[Weak Derivative]
+A function $u \in L^1_{\mathrm{loc}}(\Omega)$ is said to have a weak derivative $v = \partial_i u$ if for every test function $\varphi \in C_0^\infty(\Omega)$, we have:
+\[
+\int_\Omega u \, \partial_i \varphi \, dx = -\int_\Omega v \varphi \, dx.
+\]
+\end{definition}
+
+\begin{remark}
+This definition generalizes the classical integration-by-parts formula, allowing us to differentiate functions with "kinks" or jumps that are not classically differentiable.
+\end{remark}
+
+\begin{definition}[Sobolev Space]
+The Sobolev space $W^{1,p}(\Omega)$ consists of functions whose weak derivatives are also in $L^p$:
+\[
+W^{1,p}(\Omega) := \{u \in L^p(\Omega) : \partial_i u \in L^p(\Omega) \text{ for } i=1, \dots, n\}.
+\]
+For the Hilbert space case $p=2$, we denote $W^{1,2}(\Omega)$ as $H^1(\Omega)$.
+\end{definition}
+
+\begin{theorem}[Poincaré Inequality]
+Let $\Omega$ be a bounded domain. If $u \in W_0^{1,p}(\Omega)$, there exists a constant $C$ depending only on $\Omega$ and $p$ such that:
+\[
+\|u\|_{L^p(\Omega)} \le C \|\nabla u\|_{L^p(\Omega)}.
+\]
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof utilizes the fundamental theorem of calculus and the boundary conditions.
+\begin{enumerate}
+    \item Since $u \in W_0^{1,p}(\Omega)$, we can approximate $u$ by $C_0^\infty(\Omega)$ functions.
+    \item For $u \in C_0^\infty(\Omega)$, represent $u(x)$ as the integral of its derivative along a line segment starting from the boundary.
+    \item Apply Jensen's or Hölder's inequality to the integral representation.
+    \item Integrate the resulting inequality over the entire domain to bound the $L^p$ norm by the gradient's $L^p$ norm.
+\end{enumerate}
+\end{proof}
+
+\subsection*{(*) Boundary Traces and $W_0^{1,p}$}
+
+\begin{definition}
+$W_0^{1,p}(\Omega)$ is defined as the closure of $C_0^\infty(\Omega)$ with respect to the $W^{1,p}$ norm.
+\end{definition}
+
+\begin{remark}
+In the context of PDEs, $u \in W_0^{1,p}(\Omega)$ is the rigorous way to say $u=0$ on $\partial\Omega$. Note that boundary values are defined via a \emph{trace operator} because functions in $L^p$ are not defined pointwise on sets of measure zero (like the boundary).
+\end{remark}
+
+\subsection*{(*) Distributions and Weak Solutions}
+
+\begin{definition}[Distribution]
+A distribution $T$ is a continuous linear functional on the space of test functions $C_0^\infty(\Omega)$.
+\end{definition}
+
+\begin{definition}[Weak Formulation]
+Consider the Poisson equation $-\Delta u = f$ with $u=0$ on $\partial \Omega$. We say $u \in H_0^1(\Omega)$ is a weak solution if:
+\[
+\int_\Omega \nabla u \cdot \nabla \varphi \, dx = \int_\Omega f \varphi \, dx
+\quad \forall \varphi \in C_0^\infty(\Omega).
+\]
+\end{definition}
+
+\begin{remark}
+This formulation "shifts" the derivatives from the unknown $u$ onto the smooth test function $\varphi$, allowing us to find solutions in $H^1$ even if $f$ is only in $L^2$ or $H^{-1}$.
+\end{remark}
+
+\subsection*{(*) Elliptic Operators and Ellipticity}
+
+\begin{definition}
+A second-order differential operator $L$ in divergence form is given by:
+\[
+Lu = -\sum_{i,j=1}^n \partial_i(a^{ij}(x)\partial_j u).
+\]
+\end{definition}
+
+\begin{definition}[Uniform Ellipticity]
+The operator $L$ is uniformly elliptic if there exist constants $0 < \lambda \le \Lambda$ such that:
+\[
+\lambda|\xi|^2 \le \sum_{i,j=1}^n a^{ij}(x)\xi_i \xi_j \le \Lambda|\xi|^2
+\quad \forall \xi \in \mathbb{R}^n, \, \forall x \in \Omega.
+\]
+\end{definition}
+
+\begin{remark}
+Uniform ellipticity ensures that the quadratic form associated with $L$ is positive definite, which is essential for the coercivity required in existence theorems.
+\end{remark}
+
+\subsection*{(*) Energy Methods and Functional Analysis}
+
+\begin{theorem}[Lax--Milgram Theorem]
+Let $H$ be a Hilbert space and $a(\cdot, \cdot)$ be a bilinear form that is:
+\begin{enumerate}
+    \item Bounded: $|a(u,v)| \le M \|u\| \|v\|$
+    \item Coercive: $a(u,u) \ge \alpha \|u\|^2$ for some $\alpha > 0$.
+\end{enumerate}
+Then for any linear functional $\ell \in H^*$, there exists a unique $u \in H$ such that $a(u,v) = \ell(v)$ for all $v \in H$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+\begin{enumerate}
+    \item Use the Riesz Representation Theorem to represent the bilinear form $a(u,v)$ as $(Au, v)$ for some linear operator $A: H \to H$.
+    \item Coercivity implies that $A$ is injective and has a closed range.
+    \item Show that the range of $A$ is the entire space $H$ (otherwise, there exists a non-zero element in the orthogonal complement, contradicting coercivity).
+    \item Apply the Riesz Representation Theorem to the functional $\ell$ to find $f \in H$ such that $\ell(v) = (f,v)$. The solution is $u = A^{-1}f$.
+\end{enumerate}
+\end{proof}
+
+\subsection*{(*) Maximum Principles}
+
+\begin{theorem}[Weak Maximum Principle]
+Suppose $Lu \le 0$ in $\Omega$ (where $L$ is elliptic). Then:
+\[
+\sup_{\Omega} u \le \sup_{\partial\Omega} u^+.
+\]
+\end{theorem}
+
+\begin{remark}
+This reflects the physical intuition that for diffusion processes, the maximum value cannot be attained in the interior unless the solution is constant.
+\end{remark}
+
+\subsection*{(*) Hölder Spaces}
+
+\begin{definition}
+For $\alpha \in (0,1)$, the Hölder semi-norm is defined as:
+\[
+[u]_{C^{0,\alpha}(\Omega)} := \sup_{x,y \in \Omega, x \ne y} \frac{|u(x)-u(y)|}{|x-y|^\alpha}.
+\]
+The space $C^{k,\alpha}(\Omega)$ consists of functions whose $k$-th derivatives are $\alpha$-Hölder continuous.
+\end{definition}
+
+\begin{remark}
+$L^p$ and Sobolev spaces are sufficient for existence, but Hölder spaces are necessary for the classical Schauder estimates and pointwise regularity theory.
+\end{remark}
+
+\subsection*{Conceptual Flow}
+The logical progression of the seminar is as follows:
+\[
+L^p \xrightarrow{\text{Weak Deriv.}} W^{1,p} \xrightarrow{\text{Var. Form.}} \text{Weak solution}
+\xrightarrow{\text{Ellipticity}} \text{Energy Estimates}
+\xrightarrow{\text{Iteration/Embedding}} \text{Regularity}.
+\]
+
+\newpage
+
+\section{Main Theorems}
+
+\begin{theorem}[3.1. Weak Maximum Principle]
+Let $L$ be elliptic in the bounded domain $\Omega$. Suppose that
+\begin{equation}
+    (3.4) \quad Lu \geq 0 \text{ (resp. } \leq 0) \text{ in } \Omega, \quad c = 0 \text{ in } \Omega,
+\end{equation}
+with $u \in C^2(\Omega) \cap C^0(\overline{\Omega})$. Then the maximum (resp. minimum) of $u$ in $\overline{\Omega}$ is achieved on $\partial\Omega$:
+\begin{equation}
+    (3.5) \quad \sup_\Omega u = \sup_{\partial\Omega} u \quad (\inf_\Omega u = \inf_{\partial\Omega} u).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof utilizes a perturbation argument to handle the case where the maximum might be interior.
+\begin{enumerate}
+    \item Assume first that $Lu > 0$. If $u$ had an interior maximum at $x_0$, then $\nabla u(x_0) = 0$ and the Hessian $D^2u(x_0)$ would be negative semi-definite. By ellipticity, $Lu(x_0) = -\text{tr}(A D^2 u) \leq 0$, contradicting $Lu > 0$.
+    \item For the general case $Lu \geq 0$, consider $u_\epsilon = u + \epsilon e^{\gamma x_1}$. 
+    \item Choose $\gamma$ large enough so that $L(e^{\gamma x_1}) > 0$. Then $L(u_\epsilon) > 0$ for all $\epsilon > 0$.
+    \item Apply step 1 to $u_\epsilon$ and let $\epsilon \to 0$.
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}[3.4. Hopf Boundary Point Lemma]
+Suppose $L$ is uniformly elliptic, $c=0$, and $Lu \geq 0$ in $\Omega$. Let $x_0 \in \partial\Omega$ such that:
+\begin{enumerate}
+    \item[(i)] $u$ is continuous at $x_0$;
+    \item[(ii)] $u(x_0) > u(x)$ for all $x \in \Omega$;
+    \item[(iii)] $\partial\Omega$ satisfies an interior sphere condition at $x_0$.
+\end{enumerate}
+Then the outer normal derivative $\frac{\partial u}{\partial \nu}(x_0) > 0$.
+\end{lemma}
+
+\begin{proof}[Sketch of Proof]
+The core idea is to construct a "barrier function" in the interior ball $B \subset \Omega$ that touches $x_0$.
+\begin{enumerate}
+    \item Construct $v(x) = e^{-\alpha|x-x_C|^2} - e^{-\alpha R^2}$, where $x_C$ is the center of the interior ball.
+    \item Show that for large $\alpha$, $Lv > 0$ in an annular region within the ball.
+    \item Use the Weak Maximum Principle on $u + \epsilon v$ to show that $u$ must increase as it approaches $x_0$ from the interior.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[3.5. Strong Maximum Principle]
+Let $L$ be uniformly elliptic, $c=0$, and $Lu \geq 0$ in a domain $\Omega$. If $u$ achieves its maximum in the interior of $\Omega$, then $u$ is constant.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+This follows from the Hopf Lemma. If $u$ is not constant, we can find a point $y$ near the interior maximum and a ball $B$ where $u < \max u$, but the ball touches a point where $u = \max u$. Hopf's Lemma would then imply a non-zero gradient at the maximum, which contradicts the first-order condition $\nabla u = 0$.
+\end{proof}
+
+\begin{theorem}[6.2. Schauder Estimates]
+Let $u \in C^{2,\alpha}(\Omega)$ satisfy $Lu = f$ with $f \in C^\alpha$. Under uniform ellipticity and $C^\alpha$ bounds on coefficients:
+\begin{equation}
+    |u|^*_{2,\alpha;\Omega} \leq C(|u|_{0;\Omega} + |f|^{(2)}_{0,\alpha;\Omega})
+\end{equation}
+where $C = C(n, \alpha, \lambda, \Lambda)$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+This is a local-to-global perturbation argument.
+\begin{enumerate}
+    \item Prove the estimate for the constant-coefficient operator (Laplacian) using Newtonian potentials.
+    \item Treat $Lu=f$ as a perturbation of a constant-coefficient operator by freezing coefficients at a point $x_0$.
+    \item Use a scaling argument and "cutoff" functions to handle the error terms.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[6.8. Method of Continuity]
+Let $\Omega$ be $C^{2,\alpha}$ and $L$ be strictly elliptic with $c \le 0$. If the Dirichlet problem for $\Delta$ is solvable for all $C^\alpha$ data, then $Lu = f, u = \varphi$ is uniquely solvable in $C^{2,\alpha}(\overline{\Omega})$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+Define a family of operators $L_t = (1-t)\Delta + tL$. 
+\begin{enumerate}
+    \item Let $I = \{t \in [0,1] : L_t u = f \text{ is solvable}\}$. 
+    \item $0 \in I$ by assumption. $I$ is shown to be open via the Inverse Function Theorem (or Banach Fixed Point Theorem).
+    \item $I$ is shown to be closed using the a priori Schauder estimates to pass to the limit. Thus $1 \in I$.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[9.1. ABP Estimate]
+Let $Lu \geq f$ in a bounded domain $\Omega$ and $u \in C^0(\overline{\Omega}) \cap W^{2,n}_{\text{loc}}(\Omega)$. Then
+\begin{equation}
+    \sup_\Omega u \leq \sup_{\partial\Omega} u^+ + C \|f/\mathcal{D}^*\|_{L^n(\Omega)}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+This estimate links the maximum of $u$ to the measure of the "upper contact set" $\Gamma^+$, where $u$ is concave and lies below its tangent plane. By considering the image of the gradient map $\nabla u$ on $\Gamma^+$, one relates the volume of a ball (the range of the gradient) to the integral of the determinant of the Hessian (the Jacobian), which is bounded by $f$ due to the PDE.
+\end{proof}
+
+\begin{theorem}[9.15. $W^{2,p}$ Solvability]
+Under $C^{1,1}$ domain and $C^0$ coefficients, $Lu=f$ has a unique solution $u \in W^{2,p}(\Omega)$ for $f \in L^p$.
+\end{theorem}
+
+\section{Summary of Frameworks}
+
+
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Aspect} & \textbf{Chapter 6 (Schauder)} & \textbf{Chapter 7/8 (Sobolev)} \\ \midrule
+Solution Concept & Classical $C^{2,\alpha}$ & Weak $W^{1,2}$ \\
+Existence Method & Method of Continuity & Lax-Milgram / Galerkin \\
+Key Estimates & Schauder $C^{2,\alpha}$ & Energy / Gagliardo-Nirenberg \\
+Data Required & Hölder Continuous & $L^p$ / $H^{-1}$ \\
+Core Intuition & Local Perturbation & Minimizing Energy \\ \bottomrule
+\end{tabular}
+\caption{Comparison: Classical vs. Variational Theories}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Aspect} & \textbf{Chapter 8 (Divergence)} & \textbf{Chapter 9 (Strong)} \\ \midrule
+Operator Form & $\text{div}(A \nabla u) = f$ & $a^{ij}D_{ij}u = f$ \\
+Solution Space & $W^{1,2}$ (Energy solutions) & $W^{2,n}$ (Strong solutions) \\
+Max Principle & Weak (Integrable) & ABP (Pointwise/Contact) \\
+Regularity & De Giorgi-Nash-Moser & Krylov-Safonov \\
+Methods & Variational / Test Functions & Measure Theory / Geometry \\ \bottomrule
+\end{tabular}
+\caption{Comparison: Divergence vs. Non-Divergence Forms}
+\end{table}
+
+\end{document}

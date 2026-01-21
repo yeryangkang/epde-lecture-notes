@@ -1,0 +1,304 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\geometry{left=25mm, right=25mm, top=30mm, bottom=30mm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{PDE Seminar: Day 3 \\ Maximum Principles}
+\author{Yeryang Kang}
+\date{February 6, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction: Framework for Maximum Principles}
+
+In this session, we discuss the "Maximum Principles", which are fundamental tools for understanding the qualitative behavior of elliptic partial differential equations. Unlike the energy methods that provide global integral estimates, maximum principles offer pointwise local estimates.
+
+\subsection{Operator Structure: Non-Divergence Form}
+We consider the second-order linear elliptic operator $L$ in non-divergence form:
+\begin{equation}
+    Lu = -\sum_{i,j=1}^{n} a^{ij}(x) u_{x_i x_j} + \sum_{i=1}^{n} b^i(x) u_{x_i} + c(x) u
+\end{equation}
+where $a^{ij} = a^{ji}$ (symmetry). This form is advantageous for establishing a geometric relationship between the sign of $Lu$ and the extrema of $u$.
+
+\subsection{Uniform Ellipticity}
+The operator $L$ is said to be \textbf{uniformly elliptic} if there exists a constant $\theta > 0$ such that for almost every $x \in \Omega$ and all $\xi \in \mathbb{R}^n$:
+\begin{equation}
+    \sum_{i,j=1}^{n} a^{ij}(x) \xi_i \xi_j \ge \theta |\xi|^2
+\end{equation}
+
+---
+
+\section{Theorem 3.1: Weak Maximum Principle}
+
+This theorem extends the intuition from 1D calculus—where a function with $u'' > 0$ cannot have an interior maximum—to multi-dimensional elliptic operators.
+
+\begin{theorem}[3.1. Weak Maximum Principle]
+Let $L$ be elliptic in the bounded domain $\Omega$. Suppose that
+\begin{equation}
+    (3.4) \quad Lu \geq 0 \text{ (resp. } \leq 0) \text{ in } \Omega, \quad c = 0 \text{ in } \Omega,
+\end{equation}
+with $u \in C^2(\Omega) \cap C^0(\overline{\Omega})$. Then the maximum (resp. minimum) of $u$ in $\overline{\Omega}$ is achieved on $\partial\Omega$:
+\begin{equation}
+    (3.5) \quad \sup_\Omega u = \sup_{\partial\Omega} u \quad (\inf_\Omega u = \inf_{\partial\Omega} u).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof utilizes a perturbation argument to handle the case where the maximum might be interior.
+\begin{enumerate}
+    \item Assume first that $Lu > 0$. If $u$ had an interior maximum at $x_0$, then $\nabla u(x_0) = 0$ and the Hessian $D^2u(x_0)$ would be negative semi-definite. By ellipticity, $Lu(x_0) = -\text{tr}(A D^2 u) \leq 0$, contradicting $Lu > 0$.
+    \item For the general case $Lu \geq 0$, consider $u_\epsilon = u + \epsilon e^{\gamma x_1}$. 
+    \item Choose $\gamma$ large enough so that $L(e^{\gamma x_1}) > 0$. Then $L(u_\epsilon) > 0$ for all $\epsilon > 0$.
+    \item Apply step 1 to $u_\epsilon$ and let $\epsilon \to 0$.
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[Detailed Proof]
+We proceed in two steps, utilizing a perturbation argument to extend the result from the strict inequality case to the general case.
+
+\textbf{Step 1: The case of strict inequality.}
+First, assume that the strict inequality holds:
+\begin{equation*}
+    Lu > 0 \quad \text{in } \Omega.
+\end{equation*}
+We argue by contradiction. Suppose that $u$ achieves its maximum at an interior point $x_0 \in \Omega$. Since $u \in C^2(\Omega)$, the necessary conditions for a local maximum imply:
+\begin{equation*}
+    \nabla u(x_0) = 0 \quad \text{and} \quad D^2 u(x_0) \leq 0 \text{ (negative semi-definite)}.
+\end{equation*}
+Evaluating the operator $L$ at $x_0$, the first-order term vanishes (since $\nabla u(x_0) = 0$). By the definition of ellipticity, the coefficient matrix $A$ is positive definite. Since the trace of the product of a positive definite matrix and a negative semi-definite matrix is non-positive, we have:
+\begin{equation*}
+    Lu(x_0) = -\text{tr}(A(x_0) D^2 u(x_0)) \leq 0.
+\end{equation*}
+This implies $Lu(x_0) \leq 0$, which contradicts the assumption that $Lu > 0$ everywhere in $\Omega$. Therefore, $u$ cannot have an interior maximum, implying $\sup_\Omega u = \sup_{\partial\Omega} u$.
+
+\textbf{Step 2: The general case.}
+Now, assume the general condition $Lu \geq 0$ in $\Omega$. We construct a perturbation using the exponential function. Let $v(x) = e^{\gamma x_1}$ and define:
+\begin{equation*}
+    u_\epsilon(x) = u(x) + \epsilon e^{\gamma x_1}, \quad \text{for } \epsilon > 0.
+\end{equation*}
+We apply the linear operator $L$ to $u_\epsilon$:
+\begin{equation*}
+    L u_\epsilon = L u + \epsilon L(e^{\gamma x_1}).
+\end{equation*}
+Since $Lu \geq 0$, it suffices to show $L(e^{\gamma x_1}) > 0$. By explicit calculation, $L(e^{\gamma x_1}) = e^{\gamma x_1}(\gamma^2 (a_{11}) + \gamma b_1)$. Since $L$ is elliptic ($a_{11} > 0$ or appropriate sign convention such that the second-order term dominates positively), we can choose $\gamma$ sufficiently large such that $L(e^{\gamma x_1}) > 0$ throughout the bounded domain $\Omega$.
+Consequently, for any $\epsilon > 0$:
+\begin{equation*}
+    L u_\epsilon > 0 \quad \text{in } \Omega.
+\end{equation*}
+By the result of Step 1, $u_\epsilon$ attains its maximum on the boundary:
+\begin{equation*}
+    \sup_\Omega u_\epsilon = \sup_{\partial\Omega} u_\epsilon.
+\end{equation*}
+Finally, we take the limit as $\epsilon \to 0$. Since $u_\epsilon \to u$ uniformly on $\overline{\Omega}$, we conclude:
+\begin{equation*}
+    \sup_\Omega u = \lim_{\epsilon \to 0} \sup_\Omega u_\epsilon = \lim_{\epsilon \to 0} \sup_{\partial\Omega} u_\epsilon = \sup_{\partial\Omega} u.
+\end{equation*}
+The proof for the minimum case ($\inf_\Omega u = \inf_{\partial\Omega} u$) follows analogously by applying the maximum principle to $-u$.
+\end{proof}
+
+\section{Theorem 3.2: Hopf Boundary Point Lemma}
+
+The Weak Maximum Principle states that the maximum occurs at the boundary, but does not describe the behavior of the solution \textit{near} the boundary. The Hopf Lemma asserts that if the maximum is at the boundary, the solution must approach it with a strictly positive slope.
+
+\subsection{Geometric Prerequisite}
+\begin{definition}[Interior Sphere Condition]
+A point $x_0 \in \partial\Omega$ satisfies the interior sphere condition if there exists a ball $B \subset \Omega$ such that $x_0 \in \partial B$.
+\end{definition}
+
+\begin{lemma}[3.4. Hopf Boundary Point Lemma (positive signature representation)]
+Suppose $L$ is uniformly elliptic, $c=0$, and $Lu \geq 0$ in $\Omega$. Let $x_0 \in \partial\Omega$ such that:
+\begin{enumerate}
+    \item[(i)] $u$ is continuous at $x_0$;
+    \item[(ii)] $u(x_0) > u(x)$ for all $x \in \Omega$;
+    \item[(iii)] $\partial\Omega$ satisfies an interior sphere condition at $x_0$.
+\end{enumerate}
+Then the outer normal derivative $\frac{\partial u}{\partial \nu}(x_0) > 0$.
+\end{lemma}
+
+\begin{proof}[Sketch of Proof]
+The core idea is to construct a "barrier function" in the interior ball $B \subset \Omega$ that touches $x_0$.
+\begin{enumerate}
+    \item Construct $v(x) = e^{-\alpha|x-x_C|^2} - e^{-\alpha R^2}$, where $x_C$ is the center of the interior ball.
+    \item Show that for large $\alpha$, $Lv > 0$ in an annular region within the ball.
+    \item Use the Weak Maximum Principle on $u + \epsilon v$ to show that $u$ must increase as it approaches $x_0$ from the interior.
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[Detailed Proof]
+    Assume without loss of generality that the interior sphere $B$ is centered at the origin with radius $R$, touching $\partial \Omega$ at $x_0$. Let $A$ be the annulus $B_R(0) \setminus B_{R/2}(0)$.
+    We construct a barrier function $h(x) = e^{-\alpha |x|^2} - e^{-\alpha R^2}$.
+    Note that $h(x) = 0$ on $|x|=R$ (the boundary containing $x_0$) and $h(x) > 0$ inside.
+    A calculation similar to the Weak Maximum Principle proof shows that for $\alpha$ sufficiently large, $Lh > 0$ in the annulus $A$.
+    
+    Consider $v(x) = u(x) - u(x_0) + \epsilon h(x)$.
+    \begin{itemize}
+        \item On the outer boundary $|x|=R$: $v(x) = u(x_0) - u(x_0) + 0 = 0$.
+        \item On the inner boundary $|x|=R/2$: $u(x) - u(x_0) \le -\delta < 0$ (since $x_0$ is a strict max). We choose $\epsilon$ small enough so $\epsilon h \le \delta$. Then $v \le 0$.
+        \item In the interior of $A$: $Lv = Lu - c u(x_0) + \epsilon Lh \ge 0 - 0 + \text{positive} > 0$.
+    \end{itemize}
+    By the Weak Maximum Principle applied to $v$, we have $v \le 0$ in $A$.
+    Since $v(x_0)=0$, the outward normal derivative at $x_0$ must be non-negative:
+    \[ \frac{\partial v}{\partial \nu}(x_0) \ge 0 \implies \frac{\partial u}{\partial \nu}(x_0) + \epsilon \frac{\partial h}{\partial \nu}(x_0) \ge 0. \]
+    Calculation shows $\frac{\partial h}{\partial \nu}(x_0) = -2\alpha R e^{-\alpha R^2} < 0$.
+    Thus $\frac{\partial u}{\partial \nu}(x_0) \ge -\epsilon \frac{\partial h}{\partial \nu}(x_0) > 0$.
+\end{proof}
+
+\begin{proof}[Detailed Proof(optional)]
+We proceed by constructing a suitable barrier function on an interior ball to compare with the solution $u$.
+
+\textbf{Step 1: Geometric setup and barrier function construction.}
+Since $\partial\Omega$ satisfies an interior sphere condition at $x_0$, there exists an open ball $B = B_R(x_C) \subset \Omega$ such that $\partial B \cap \partial \Omega = \{x_0\}$. Note that $|x_0 - x_C| = R$ and the outer unit normal at $x_0$ is $\nu = (x_0 - x_C)/R$.
+Following the sketch, we define the auxiliary function $v$ on the ball $B$:
+\begin{equation*}
+    v(x) = e^{-\alpha |x - x_C|^2} - e^{-\alpha R^2},
+\end{equation*}
+where $\alpha > 0$ is a constant to be chosen later. Observe that $v(x) > 0$ in $B$ and $v(x) = 0$ on $\partial B$ (and specifically at $x_0$).
+
+\textbf{Step 2: Differential inequality for $v$.}
+We apply the elliptic operator $L$ to $v$. Let $r = |x - x_C|$. Direct computation yields:
+\begin{align*}
+    Lv &= L(e^{-\alpha r^2}) (\because c=0) \\
+       &= e^{-\alpha r^2} \left[ 4\alpha^2 \sum_{i,j=1}^n a_{ij}(x) (x_i - x_{C,i})(x_j - x_{C,j}) - 2\alpha \sum_{i=1}^n a_{ii}(x) - 2\alpha \sum_{i=1}^n b_i(x) (x_i - x_{C,i}) \right].
+\end{align*}
+By the uniform ellipticity condition, there exists $\lambda > 0$ such that $\sum a_{ij} \xi_i \xi_j \geq \lambda |\xi|^2$. Thus, the quadratic term dominates:
+\begin{equation*}
+    \sum_{i,j} a_{ij} (x_i - x_{C,i})(x_j - x_{C,j}) \geq \lambda |x - x_C|^2 = \lambda r^2.
+\end{equation*}
+Consider an annular region $A = B \setminus \overline{B_{R/2}(x_C)}$. In this region, $R/2 < r < R$. By choosing $\alpha$ sufficiently large, the term involving $4\alpha^2 \lambda r^2$ dominates the lower-order terms (which are $O(\alpha)$). Therefore, we obtain:
+\begin{equation*}
+    Lv > 0 \quad \text{in the annulus } A.
+\end{equation*}
+
+\textbf{Step 3: Comparison argument.}
+We now compare $u$ with a perturbation involving $v$. Consider the function:
+\begin{equation*}
+    w(x) = u(x) + \epsilon v(x).
+\end{equation*}
+We aim to show $w(x) \leq u(x_0)$ in the annulus $A$ for sufficiently small $\epsilon$.
+\begin{itemize}
+    \item On the outer boundary $\partial B \cap \partial A$ (which contains $x_0$): Since $v=0$, we have $w(x) = u(x) \leq u(x_0)$.
+    \item On the inner boundary $|x - x_C| = R/2$: Since $u(x_0)$ is a strict maximum (condition (ii)) and the set $\{|x - x_C| = R/2\}$ is a compact subset of $\Omega$, there exists $\delta > 0$ such that $u(x) \leq u(x_0) - \delta$. We choose $\epsilon$ small enough so that $\epsilon v(x) \leq \delta$ on this inner boundary. Thus,
+    \begin{equation*}
+        w(x) = u(x) + \epsilon v(x) \leq u(x_0) - \delta + \delta = u(x_0).
+    \end{equation*}
+\end{itemize}
+In the interior of $A$, we have $Lw = Lu + \epsilon Lv$. Since $Lu \geq 0$ (hypothesis) and $Lv > 0$ (from Step 2), it follows that $Lw > 0$.
+By the Weak Maximum Principle applied to $w$ in the annulus $A$, the maximum of $w$ occurs on the boundary $\partial A$. As shown above, $w \leq u(x_0)$ on both parts of the boundary, so $w(x) \leq u(x_0)$ for all $x \in A$.
+
+\textbf{Step 4: Normal derivative at $x_0$.}
+Since $w(x) \leq u(x_0)$ in $A$ and $w(x_0) = u(x_0)$, the function $w$ achieves a maximum at $x_0$. Therefore, the outer normal derivative of $w$ at $x_0$ must be non-negative:
+\begin{equation*}
+    \frac{\partial w}{\partial \nu}(x_0) = \frac{\partial u}{\partial \nu}(x_0) + \epsilon \frac{\partial v}{\partial \nu}(x_0) \geq 0.
+\end{equation*}
+Calculating the normal derivative of $v$:
+\begin{equation*}
+    \frac{\partial v}{\partial \nu}(x_0) = \nabla v(x_0) \cdot \frac{x_0 - x_C}{R} = \left( -2\alpha (x_0 - x_C) e^{-\alpha R^2} \right) \cdot \frac{x_0 - x_C}{R} = -2\alpha R e^{-\alpha R^2} < 0.
+\end{equation*}
+Substituting this back, we get:
+\begin{equation*}
+    \frac{\partial u}{\partial \nu}(x_0) \geq -\epsilon \frac{\partial v}{\partial \nu}(x_0) = \epsilon (2\alpha R e^{-\alpha R^2}) > 0.
+\end{equation*}
+Thus, $\frac{\partial u}{\partial \nu}(x_0) > 0$, as required.
+\end{proof}
+
+\section{Theorem 3.3: Strong Maximum Principle}
+
+This theorem combines the results of the Weak Maximum Principle and the Hopf Lemma to establish the "stiffness" of harmonic functions.
+
+\begin{theorem}[Strong Maximum Principle] \label{thm:strong_max}
+Let $\Omega$ be a connected open set. Let $u \in C^2(\Omega) \cap C^0(\overline{\Omega})$ satisfy $Lu \ge 0$ in $\Omega$ with $c(x) = 0$.
+If $u$ attains its maximum value at an interior point $x_0 \in \Omega$, then $u$ must be constant throughout $\Omega$.
+\end{theorem}
+
+\subsection{Proof Strategy: The "Cutting" Argument}
+We use proof by contradiction. Suppose $u$ attains an interior maximum $M$ but is not constant.
+\begin{enumerate}
+    \item \textbf{Topological Argument:} Define the set $E = \{x \in \Omega \mid u(x) = M\}$ and $V = \{x \in \Omega \mid u(x) < M\}$. Since $\Omega$ is connected and $u$ is not constant, the boundary between $E$ and $V$ lies inside $\Omega$.
+    \item \textbf{Geometric Construction:} We fit an interior ball $B$ inside $V$ such that it touches a point $x_0$ on the boundary of $E$.
+    \item \textbf{Contradiction:}
+    \begin{itemize}
+        \item By the "Hopf Lemma" applied to $B$, the outward derivative at $x_0$ must be strictly positive: $\frac{\partial u}{\partial \nu}(x_0) > 0$.
+        \item However, since $x_0$ is an "interior maximum" of $\Omega$, calculus dictates that the gradient must vanish: $\nabla u(x_0) = 0$.
+    \end{itemize}
+    This contradiction implies that $V$ must be empty, so $u$ is constant.
+\end{enumerate}
+
+\begin{proof}[Detailed Proof]
+    Let $M = \sup_\Omega u$. Define the set $\Sigma = \{ x \in \Omega : u(x) = M \}$.
+    Since $u$ is continuous, $\Sigma$ is closed in $\Omega$.
+    Suppose $\Sigma \neq \Omega$. Since $\Omega$ is connected, the boundary $\partial \Sigma \cap \Omega$ is non-empty.
+    Let $y \in \Omega \setminus \Sigma$ be a point closer to $\Sigma$ than to $\partial \Omega$. We can expand a ball centered at $y$ until it just touches $\Sigma$ at some point $x_0 \in \Sigma$.
+    Let $B$ be this ball. Then $u(x) < M$ for all $x \in B$ and $u(x_0) = M$.
+    This satisfies the conditions for the Hopf Lemma at $x_0$ (with $B$ as the interior sphere).
+    Therefore, $\frac{\partial u}{\partial \nu}(x_0) > 0$.
+    However, since $x_0$ is an interior maximum point of $\Omega$, we must have $Du(x_0) = 0$, which implies $\frac{\partial u}{\partial \nu}(x_0) = 0$.
+    This is a contradiction. Thus, $\Sigma = \Omega$, meaning $u \equiv M$ everywhere.
+\end{proof}
+
+\begin{proof}[Detailed Proof(optional)]
+We prove the theorem by contradiction. Let $M = \sup_\Omega u$. Assume that $u$ attains this maximum at some interior point of $\Omega$, but $u$ is not constant in $\Omega$.
+
+\textbf{Step 1: Topological setup.}
+Define the set where $u$ attains its maximum:
+\begin{equation*}
+    E = \{ x \in \Omega \mid u(x) = M \}.
+\end{equation*}
+Since $u$ is continuous, the set $E$ is closed relative to $\Omega$. By our assumption, $E$ is non-empty (since the maximum is attained) and $E \neq \Omega$ (since $u$ is not constant).
+Let $V = \Omega \setminus E = \{ x \in \Omega \mid u(x) < M \}$. Since $E \neq \Omega$, $V$ is non-empty. Since $E$ is closed, $V$ is open.
+Because $\Omega$ is a connected open set, it cannot be the union of two disjoint non-empty open sets (if $E$ were open, this would be a contradiction). Therefore, $E$ is not open, which implies that the boundary of $E$ intersects the interior of $\Omega$. That is, $\partial E \cap \Omega \neq \emptyset$.
+
+\textbf{Step 2: Geometric construction (The "Touching" Argument).}
+Although there exists a point on the boundary of $E$, we need to satisfy the interior sphere condition to apply Hopf's Lemma.
+Choose a point $y \in V$ that is closer to $E$ than to the boundary of $\Omega$ (i.e., $\text{dist}(y, E) < \text{dist}(y, \partial \Omega)$). Let $R = \text{dist}(y, E)$. Consider the ball $B = B_R(y)$.
+By the definition of distance:
+\begin{enumerate}
+    \item $B \subset V$, meaning $u(x) < M$ for all $x \in B$.
+    \item There exists a point $x_0 \in \partial B \cap E$. Since $x_0 \in E$, we have $u(x_0) = M$.
+\end{enumerate}
+Note that $x_0$ lies strictly inside $\Omega$ because $R < \text{dist}(y, \partial \Omega)$. The ball $B$ satisfies the interior sphere condition at $x_0$ relative to the set where $u < M$.
+
+\textbf{Step 3: Contradiction via Hopf Lemma.}
+We now restrict our attention to the ball $B$. We satisfy all conditions for the \textbf{Hopf Boundary Point Lemma}:
+\begin{itemize}
+    \item $Lu \geq 0$ in $B$ (since $B \subset \Omega$).
+    \item $u(x) < u(x_0)$ for all $x \in B$.
+    \item $x_0 \in \partial B$.
+\end{itemize}
+Applying the lemma, the outer normal derivative of $u$ at $x_0$ must be strictly positive:
+\begin{equation*}
+    \frac{\partial u}{\partial \nu}(x_0) > 0,
+\end{equation*}
+where $\nu$ is the outward unit normal vector to $\partial B$ at $x_0$.
+
+However, looking at the global domain $\Omega$, the point $x_0$ is an interior point where $u$ attains its maximum $M$. Since $u \in C^1(\Omega)$, a necessary condition for an interior maximum is that the gradient vanishes:
+\begin{equation*}
+    \nabla u(x_0) = 0.
+\end{equation*}
+This implies that the directional derivative in any direction, specifically the normal direction, must be zero:
+\begin{equation*}
+    \frac{\partial u}{\partial \nu}(x_0) = \nabla u(x_0) \cdot \nu = 0.
+\end{equation*}
+This contradicts the strict inequality obtained from Hopf's Lemma.
+Therefore, the set $V$ must be empty, which implies $E = \Omega$. Thus, $u$ is constant throughout $\Omega$.
+\end{proof}
+
+\section{Summary}
+\begin{itemize}
+    \item \textbf{Weak Maximum Principle:} The maximum is at the boundary.
+    \item \textbf{Hopf Lemma:} At a boundary maximum, the slope is non-zero (outward).
+    \item \textbf{Strong Maximum Principle:} An interior maximum implies a constant solution; otherwise, the "flatness" required by calculus contradicts the "steepness" required by the Hopf Lemma.
+\end{itemize}
+
+\end{document}

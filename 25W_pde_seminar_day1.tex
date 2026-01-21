@@ -1,0 +1,522 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{solution}{Solution}[section]
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Lscr}{\mathcal{L}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\loc}{{\text{loc}}}
+\newcommand{\Wkp}{W^{k,p}}
+\newcommand{\Wkploc}{W^{k,p}_{\text{loc}}}
+\newcommand{\Wkz}{W^{k,p}_0}
+\newcommand{\dx}{dx}
+\newcommand{\Hk}{H^{k}}
+\newcommand{\Hz}{H^{1}_{0}}
+\newcommand{\Hm}{H^{-1}}
+
+\title{PDE Seminar: Day 1 \\ Sobolev Spaces and Distributions}
+\author{Yeryang Kang}
+\date{January 30, 2026}
+
+\begin{document}
+
+\maketitle
+
+
+\section{$\sigma$-Algebras and Measurable Sets}
+
+A $\sigma$-algebra provides the formal framework for defining sets that are "measurable" in the sense of measure theory.
+
+\begin{definition}[$\sigma$-algebra]
+Let $X$ be a set. A $\sigma$-algebra on $X$ is a non-empty collection $\Sigma$ of subsets of $X$ satisfying:
+\begin{enumerate}
+    \item $\emptyset \in \Sigma$ and $X \in \Sigma$.
+    \item \textbf{Closed under complement:} If $E \in \Sigma$, then $E^c = X \setminus E \in \Sigma$.
+    \item \textbf{Closed under countable unions:} If $\{E_k\}_{k=1}^\infty \subseteq \Sigma$, then $\bigcup_{k=1}^\infty E_k \in \Sigma$.
+\end{enumerate}
+By De Morgan's laws, these conditions imply $\Sigma$ is also closed under countable intersections.
+\end{definition}
+
+\section{Set Functions and Measures}
+
+\begin{definition}[Set Function]
+A set function is a function whose domain is a family of subsets (usually a $\sigma$-algebra) of a given set $X$, mapping to the extended real line $[-\infty, \infty]$.
+\end{definition}
+
+\begin{definition}[Measure]
+Let $X$ be a set and $\Sigma$ be a $\sigma$-algebra over $X$. A set function $\mu: \Sigma \to [0, \infty]$ is called a \textbf{positive measure} if:
+\begin{enumerate}
+    \item $\mu(\emptyset) = 0$.
+    \item \textbf{Countable Additivity:} For any sequence $\{E_k\}_{k=1}^\infty$ of pairwise disjoint sets in $\Sigma$:
+    \[ 
+        \mu\!\left( \bigcup_{k=1}^\infty E_k \right) = \sum_{k=1}^\infty \mu(E_k).
+    \]
+\end{enumerate}
+The triple $(X, \Sigma, \mu)$ is called a \textbf{measure space}.
+\end{definition}
+
+\section{Lebesgue Measure on $\R^n$}
+
+The Lebesgue measure extends the notions of length, area, and volume to Euclidean spaces $\R^n$.
+
+\begin{definition}[Lebesgue Outer Measure]
+For any subset $E \subset \R^n$, the Lebesgue outer measure $\lambda^*(E)$ is defined as:
+\[ 
+    \lambda^*(E) := \inf \left\{ \sum_{k=1}^\infty \operatorname{vol}(C_k) \right\},
+\]
+where the infimum is taken over all sequences of open rectangular cuboids $\{C_k\}$ such that $E \subset \bigcup_{k=1}^\infty C_k$. 
+\begin{itemize}
+    \item In 1D, $\operatorname{vol}(C_k)$ is the length $l(I) = b-a$.
+    \item In $n$-dimensions, for $C = I_1 \times \dots \times I_n$, $\operatorname{vol}(C) = \prod_{i=1}^n l(I_i)$.
+\end{itemize}
+\end{definition}
+
+\begin{proposition}[Carath\'eodory Criterion]
+A set $E \subset \R^n$ is \textbf{Lebesgue measurable} if for every test set $A \subset \R^n$:
+\[
+    \lambda^*(A) = \lambda^*(A \cap E) + \lambda^*(A \cap E^c).
+\]
+The collection $\Lscr$ of all such measurable sets forms a $\sigma$-algebra. Restricting $\lambda^*$ to $\Lscr$ gives the Lebesgue measure $m$, i.e., $m(E) = \lambda^*(E)$ for $E \in \Lscr$. The triple $(\R^n, \Lscr, m)$ is the Lebesgue measure space.
+\end{proposition}
+
+\begin{exercise}[Properties of Lebesgue Measure]
+For $n \geq 1$:
+\begin{enumerate}
+    \item Verify that $\Lscr$ satisfies the axioms of a $\sigma$-algebra.
+    \item Show that the restriction $\lambda^*|_{\Lscr}$ satisfies countable additivity, hence is a measure.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\ \\
+\begin{enumerate}
+    \item We only show closure under countable unions. Let $\{E_k\} \subset \Lscr$ be pairwise disjoint and set $E = \bigcup_k E_k$.
+    For any $A$, iterating the Carath\'eodory condition gives
+    \[
+        \lambda^*(A) = \sum_{k=1}^N \lambda^*(A \cap E_k) + \lambda^*\!\left(A \cap \bigcap_{k=1}^N E_k^c\right).
+    \]
+    Letting $N \to \infty$ yields
+    \[
+        \lambda^*(A) = \lambda^*(A \cap E) + \lambda^*(A \cap E^c),
+    \]
+    so $E \in \Lscr$.
+
+    \item For countable additivity, let $\{E_k\} \subset \Lscr$ be disjoint and $E = \bigcup_k E_k$.
+    Apply Carath\'eodory with $A = E$:
+    \[
+        \lambda^*(E) = \sum_{k=1}^N \lambda^*(E_k) + \lambda^*\!\left(E \cap \bigcap_{k=1}^N E_k^c\right).
+    \]
+    The last term decreases to $0$ as $N \to \infty$, hence
+    \[
+        \lambda^*(E) = \sum_{k=1}^\infty \lambda^*(E_k).
+    \]
+    Thus $\lambda^*|_{\Lscr}$ is a measure.
+\end{enumerate}
+\end{solution}
+
+\begin{example}[Dirichlet Function in 1D]
+Define $f: \R \to \R$ as the indicator of the rationals:
+\[ 
+    f(x) = \mathbf{1}_{\Q}(x) = 
+    \begin{cases} 
+        1 & \text{if } x \in \Q, \\ 
+        0 & \text{if } x \in \R \setminus \Q.
+    \end{cases}
+\]
+On $[0,1]$:
+\begin{itemize}
+    \item $\Q \cap [0,1]$ is countable, so $m(\Q \cap [0,1]) = 0$.
+    \item $m([0,1] \setminus \Q) = 1$.
+\end{itemize}
+The Lebesgue integral is
+\[ 
+    \int_{[0,1]} f \, dm = 1 \cdot m(\Q) + 0 \cdot m(\R \setminus \Q) = 0.
+\]
+\end{example}
+
+
+\section{Lebesgue Spaces $L^p$}
+
+Let $(X, \Sigma, \mu)$ be a measure space and $f$ a measurable function.
+
+\subsection{$L^p$ spaces for $0 < p < \infty$}
+Define the $L^p$ (semi-)norm by
+\[ 
+    \norm{f}_p := \left( \int_X |f|^p \, d\mu \right)^{1/p}.
+\]
+The space $L^p(X, \mu)$ consists of all measurable $f$ with $\norm{f}_p < \infty$ (identifying functions equal a.e.).
+
+\subsection{$L^\infty$ space}
+For a measurable $g: X \to [0, \infty]$, define the set of essential bounds
+\[
+    S = \{ \alpha \in [0, \infty] \mid \mu(\{x : g(x) > \alpha\}) = 0 \}.
+\]
+If $S = \emptyset$, set $\norm{g}_\infty = \infty$; otherwise, the \textbf{essential supremum} is
+\[
+    \norm{g}_\infty := \inf S.
+\]
+Functions in $L^\infty(X, \mu)$ are essentially bounded.
+
+
+\section{Key Inequalities and Convexity}
+
+
+\subsection{Conjugate Exponents}
+\begin{definition}[Conjugate Exponents]
+Two positive real numbers $p$ and $q$ are called \textbf{conjugate exponents} if
+\[
+    \frac{1}{p} + \frac{1}{q} = 1.
+\]
+Common pairs: $p=q=2$ (self‑conjugate, Hilbert space case) and $p=1, q=\infty$ (limiting case).
+\end{definition}
+
+\subsection{Hölder's Inequality}
+\begin{proposition}[Basic Hölder Inequality]
+Let $p, q$ be conjugate exponents with $1 < p < \infty$, and let $f, g$ be non‑negative measurable functions on $(X, \mu)$. Then
+\[
+    \int_X f g \, d\mu \leq \left( \int_X f^p \, d\mu \right)^{1/p} \left( \int_X g^q \, d\mu \right)^{1/q}.
+\]
+\end{proposition}
+
+\begin{proof}
+Set $A = \|f\|_p$, $B = \|g\|_q$.
+\begin{enumerate}
+    \item If $A = 0$, then $f = 0$ a.e., so $fg = 0$ a.e., and the inequality holds.
+    \item If $A > 0$ and $B = \infty$, the inequality is trivial.
+    \item Assume $0 < A, B < \infty$. Define normalized functions $F = f/A$, $G = g/B$, so that $\|F\|_p = \|G\|_q = 1$.
+    
+    For any $x$ with $0 < F(x), G(x) < \infty$, write $F(x) = e^{s/p}$, $G(x) = e^{t/q}$. By convexity of the exponential,
+    \[
+        e^{\frac{s}{p} + \frac{t}{q}} \leq \frac{1}{p} e^s + \frac{1}{q} e^t,
+    \]
+    which gives the pointwise Young inequality
+    \[
+        F(x) G(x) \leq \frac{F(x)^p}{p} + \frac{G(x)^q}{q} \qquad \text{for a.e. } x. \tag{*}
+    \]
+    Integrating (*) over $X$ yields
+    \[
+        \int_X F G \, d\mu \leq \frac{1}{p} \int_X F^p \, d\mu + \frac{1}{q} \int_X G^q \, d\mu = \frac{1}{p} + \frac{1}{q} = 1.
+    \]
+    Substituting back $F = f/A$, $G = g/B$ gives $\frac{1}{AB} \int_X fg \, d\mu \leq 1$, i.e., $\int_X fg \, d\mu \leq A B$.
+\end{enumerate}
+\end{proof}
+
+\subsection{Convex Functions}
+\begin{definition}[Convex Function]
+A function $\phi: (a, b) \to \R$ (with $-\infty \leq a < b \leq \infty$) is \textbf{convex} if
+\[
+    \phi((1-\lambda)x + \lambda y) \leq (1-\lambda)\phi(x) + \lambda\phi(y)
+\]
+for all $x, y \in (a, b)$ and all $\lambda \in [0,1]$.
+\end{definition}
+
+\subsection{General Hölder Inequality}
+\begin{proposition}[Hölder in $L^p$]
+Let $1 \leq p \leq \infty$ and $q$ be its conjugate exponent. If $f \in L^p(\mu)$ and $g \in L^q(\mu)$, then $fg \in L^1(\mu)$ and
+\[
+    \| fg \|_1 \leq \| f \|_p \, \| g \|_q.
+\]
+\end{proposition}
+
+\begin{proof}
+The case $1 < p < \infty$ follows from the basic Hölder inequality applied to $|f|$ and $|g|$.
+
+For $p = \infty$ (so $q = 1$), the definition of $\| \cdot \|_\infty$ gives $|f(x)g(x)| \leq \|f\|_\infty |g(x)|$ a.e. Integrating yields the result. The case $p=1, q=\infty$ is symmetric.
+\end{proof}
+
+
+\section{Weak Derivatives}
+
+
+\subsection{Motivation and Definition}
+We begin by substantially weakening the notion of partial derivatives.
+
+\noindent \textbf{Notation.} Let $C_c^\infty(U)$ denote the space of infinitely differentiable functions $\phi: U \to \mathbb{R}$ with compact support in $U$. Functions $\phi \in C_c^\infty(U)$ are called \emph{test functions}.
+
+\noindent \textbf{Motivation.} Assume $u \in C^1(U)$. For any $\phi \in C_c^\infty(U)$, integration by parts gives
+\begin{equation}
+    \int_U u \phi_{x_i} \, dx = -\int_U u_{x_i} \phi \, dx \qquad (i=1,\dots,n). \tag{1}
+\end{equation}
+There are no boundary terms because $\phi$ has compact support. More generally, if $u \in C^k(U)$ and $\alpha = (\alpha_1,\dots,\alpha_n)$ is a multi‑index of order $|\alpha| = k$, then
+\begin{equation}
+    \int_U u \, D^\alpha \phi \, dx = (-1)^{|\alpha|} \int_U D^\alpha u \, \phi \, dx. \tag{2}
+\end{equation}
+This follows by applying (1) repeatedly.
+
+Observing that the left‑hand side of (2) makes sense for any locally integrable $u$, we are led to the following definition.
+
+\begin{definition}[Weak Derivative]
+Let $u, v \in L^1_{\loc}(U)$ and let $\alpha$ be a multi‑index. We say that $v$ is the $\alpha^{\text{th}}$ \textbf{weak partial derivative} of $u$, written
+\[
+    D^\alpha u = v,
+\]
+provided
+\begin{equation}
+    \int_U u \, D^\alpha \phi \, dx = (-1)^{|\alpha|} \int_U v \phi \, dx \qquad \text{for all } \phi \in C_c^\infty(U). \tag{3}
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Uniqueness]
+A weak $\alpha^{\text{th}}$-partial derivative of $u$, if it exists, is unique up to sets of measure zero.
+\end{lemma}
+
+\begin{proof}
+Assume $v, \tilde{v} \in L^1_{\loc}(U)$ both satisfy (3) for all test functions $\phi$. Then
+\[
+    \int_U (v - \tilde{v}) \phi \, dx = 0 \quad \forall \phi \in C_c^\infty(U),
+\]
+which implies $v = \tilde{v}$ almost everywhere.
+\end{proof}
+
+\subsection{Example}
+\begin{example}
+Let $n=1$, $U = (0,2)$, and
+\[
+    u(x) = 
+    \begin{cases}
+        x, & 0 < x \leq 1, \\
+        1, & 1 \leq x < 2.
+    \end{cases}
+\]
+Define
+\[
+    v(x) = 
+    \begin{cases}
+        1, & 0 < x \leq 1, \\
+        0, & 1 < x < 2.
+    \end{cases}
+\]
+We claim $u' = v$ in the weak sense. Indeed, for any $\phi \in C_c^\infty(U)$,
+\begin{align*}
+    \int_0^2 u \phi' \, dx 
+    &= \int_0^1 x \phi' \, dx + \int_1^2 \phi' \, dx \\
+    &= \big[ x\phi(x) \big]_0^1 - \int_0^1 \phi \, dx + \phi(2) - \phi(1) \\
+    &= -\int_0^1 \phi \, dx = -\int_0^2 v \phi \, dx,
+\end{align*}
+which is exactly condition (3) with $\alpha = 1$.
+\end{example}
+
+
+\section{Compact Sets in $\R^n$: A Brief Review}
+
+\begin{itemize}
+\item Typical examples of compact sets in $\mathbb{R}^n$ (by Heine--Borel theorem):
+\begin{itemize}
+\item Finite sets.
+\item Closed hypercubes: $[a_1,b_1] \times \cdots \times [a_n,b_n]$.
+\item Closed balls: $\overline{B}(x_0,r)$.
+\item $n$-spheres: $\{ x \in \mathbb{R}^{n+1} \mid |x| = 1 \}$.
+\end{itemize}
+\end{itemize}
+
+
+\section{Sobolev Spaces}
+
+Fix $1 \leq p \leq \infty$ and let $k$ be a nonnegative integer. Sobolev spaces are function spaces whose members have weak derivatives up to order $k$ lying in $L^p$.
+
+\subsection{Definition and Basic Properties}
+\begin{definition}[Sobolev Space $\Wkp(U)$]
+The Sobolev space $\Wkp(U)$ consists of all locally summable functions $u : U \rightarrow \mathbb{R}$ such that for each multi-index $\alpha$ with $|\alpha| \leq k$, the weak derivative $D^{\alpha}u$ exists and belongs to $L^p(U)$.
+\end{definition}
+
+\begin{remark} 
+\mbox{}\\
+
+(i) When $p = 2$, we denote $\Hk(U) = \Wkp(U)$ for $k = 0, 1, \ldots$. The letter $H$ is used because $\Hk(U)$ is a Hilbert space. Note that $H^{0}(U) = L^2(U)$.
+\bigskip
+
+(ii) We identify functions in $\Wkp(U)$ that agree almost everywhere.
+\end{remark}
+
+\begin{definition}[Sobolev Norm]
+For $u \in \Wkp(U)$, define its Sobolev norm by
+\[
+\norm{u}_{\Wkp(U)} := 
+\begin{cases}
+\left(\displaystyle\sum_{|\alpha| \leq k} \int_U |D^{\alpha}u|^p \dx\right)^{1/p} & (1 \leq p < \infty), \\[12pt]
+\displaystyle\sum_{|\alpha| \leq k} \operatorname*{ess\,sup}_U |D^{\alpha}u| & (p = \infty).
+\end{cases}
+\]
+\end{definition}
+
+\subsection{Convergence and Local Spaces}
+\begin{definition}[Convergence in Sobolev Spaces]
+\mbox{}\\
+\begin{enumerate}
+\item Let $\{u_m\}_{m=1}^{\infty}, u \in \Wkp(U)$. We say $u_m$ \textbf{converges to $u$ in $\Wkp(U)$}, written
+\[
+u_m \to u \quad \text{in } \Wkp(U),
+\]
+provided $\displaystyle\lim_{m\to\infty} \norm{u_m - u}_{\Wkp(U)} = 0$.
+
+\item We say $u_m \to u$ \textbf{in $\Wkploc(U)$} if $u_m \to u$ in $\Wkp(V)$ for every $V \subset\subset U$ (i.e., $V$ is compactly contained in $U$).
+\end{enumerate}
+\end{definition}
+
+\subsection{Space $\Wkz(U)$: Functions with Zero Boundary Values}
+\begin{definition}[$\Wkz(U)$]
+We denote by $\Wkz(U)$ the closure of $C^{\infty}_{c}(U)$ in $\Wkp(U)$. 
+\end{definition}
+
+Thus $u \in \Wkz(U)$ if and only if there exist functions $u_m \in C^{\infty}_{c}(U)$ such that $u_m \to u$ in $\Wkp(U)$. Intuitively, $\Wkz(U)$ consists of functions $u \in \Wkp(U)$ that satisfy
+\[
+``D^{\alpha}u = 0 \text{ on } \partial U" \quad \text{for all } |\alpha| \leq k-1,
+\]
+in a weak sense. This interpretation will be made precise by the theory of traces.
+
+
+\section{Poincaré Inequality}
+
+The Poincaré inequality shows that for functions vanishing on the boundary, the $L^p$ norm can be controlled by the norm of the gradient.
+
+\begin{theorem}[Poincaré Inequality for $W^{1,p}_0(\Omega)$]
+Let $\Omega$ be a bounded domain. If $u \in W^{1,p}_0(\Omega)$, there exists a constant $C = C(\Omega, p)$ such that
+\[
+\norm{u}_{L^p(\Omega)} \leq C \norm{\nabla u}_{L^p(\Omega)}.
+\]
+\end{theorem}
+
+\begin{proof}
+We present the proof for $n=1$; the generalization to $n \geq 2$ is straightforward.
+
+First, prove the inequality for $u \in C_0^\infty(\Omega)$. Since $\Omega$ is bounded, enclose it in a cube $Q = [0, a]^n$. Extend $u$ by zero to $Q$, so $u \in C_0^\infty(Q)$.
+
+For $x = (x_1, \dots, x_n) \in Q$, we have
+\[
+u(x) = \int_0^{x_1} \partial_1 u(t, x_2, \dots, x_n) \, dt,
+\]
+because $u(0, x_2, \dots, x_n) = 0$. By Hölder's inequality,
+\[
+|u(x)|^p \leq \left( \int_0^{x_1} |\partial_1 u(t, x_2, \dots, x_n)| \, dt \right)^p 
+\leq x_1^{p-1} \int_0^{x_1} |\partial_1 u(t, x_2, \dots, x_n)|^p \, dt.
+\]
+
+Integrate over $Q$:
+\begin{align*}
+\int_Q |u(x)|^p \dx 
+&\leq \int_Q x_1^{p-1} \left( \int_0^{x_1} |\partial_1 u(t, x')|^p \, dt \right) \dx \\
+&= \int_{[0,a]^{n-1}} \int_0^a x_1^{p-1} \left( \int_0^{x_1} |\partial_1 u(t, x')|^p \, dt \right) dx_1 \, dx',
+\end{align*}
+
+where $x' = (x_2, \dots, x_n)$. Changing the order of integration,
+\begin{align*}
+\int_0^a x_1^{p-1} & \left( \int_0^{x_1} |\partial_1 u(t, x')|^p \, dt \right) dx_1 \\
+&= \int_0^a |\partial_1 u(t, x')|^p \left( \int_t^a x_1^{p-1} \, dx_1 \right) dt \\
+&= \int_0^a |\partial_1 u(t, x')|^p \cdot \frac{a^p - t^p}{p} \, dt \\
+&\leq \frac{a^p}{p} \int_0^a |\partial_1 u(t, x')|^p \, dt.
+\end{align*}
+
+Therefore,
+\[
+\int_Q |u|^p \dx \leq \frac{a^p}{p} \int_Q |\partial_1 u|^p \dx 
+\leq \frac{a^p}{p} \int_Q |\nabla u|^p \dx.
+\]
+Hence,
+\[
+\norm{u}_{L^p(\Omega)} = \norm{u}_{L^p(Q)} \leq \frac{a}{p^{1/p}} \norm{\nabla u}_{L^p(\Omega)}.
+\]
+
+Now for general $u \in W^{1,p}_0$, take a sequence $\{u_k\} \subset C_0^\infty(\Omega)$ with $u_k \to u$ in $W^{1,p}(\Omega)$. Applying the inequality to each $u_k$ and passing to the limit yields the result.
+\end{proof}
+
+\begin{remark}[General Poincaré Inequality]
+For $u \in W_0^{n,p}(\Omega)$ with $\Omega$ bounded, there exists $C = C(\Omega, n, p)$ such that
+\[
+\norm{u}_{L^p(\Omega)} \leq C \sum_{|\alpha| = n} \norm{D^\alpha u}_{L^p(\Omega)}.
+\]
+\end{remark}
+
+
+\section{Boundary Values and Trace Operator}
+
+\begin{remark}
+Boundary values of Sobolev functions are defined via a \textbf{trace operator}. For $u \in W_0^{1,p}(\Omega)$, the trace $T u$ is a well-defined element of $L^p(\partial\Omega)$ (for sufficiently smooth $\partial\Omega$). This is not a pointwise restriction but a continuous linear operator
+\[
+T : W^{1,p}(\Omega) \to L^p(\partial\Omega).
+\]
+The space $W^{1,p}(\Omega)$ precisely consists of functions whose trace is zero.
+\end{remark}
+
+
+\section{Distributions and Weak Solutions}
+
+
+\subsection{Distributions: Basic Idea}
+A \textbf{distribution} generalizes the concept of a function. Formally, a distribution $T$ is a continuous linear functional
+\[
+T : C_0^\infty(\Omega) \to \mathbb{R}.
+\]
+\begin{example}[Regular Distributions]
+If $g \in L^1_{\loc}(\Omega)$, then
+\[
+T_g(\varphi) := \int_\Omega g(x)\varphi(x)\dx
+\]
+defines a distribution.
+\end{example}
+\begin{example}[Dirac Delta]
+The Dirac delta $\delta_{x_0}$ is defined by $\delta_{x_0}(\varphi)=\varphi(x_0)$.
+\end{example}
+
+Test functions $\varphi \in C_0^\infty(\Omega)$ are ideal because they are smooth and vanish near the boundary, so integration by parts produces no boundary terms.
+
+\subsection{Weak Formulation of Poisson's Equation}
+Consider the Dirichlet problem
+\[
+-\Delta u = f \quad \text{in } \Omega, \qquad u=0 \text{ on } \partial\Omega.
+\]
+If $u$ were smooth, multiplying by a test function $\varphi \in C_0^\infty(\Omega)$ and integrating by parts gives
+\[
+\int_\Omega \nabla u \cdot \nabla \varphi \dx = \int_\Omega f\varphi \dx.
+\]
+This identity makes sense even when $u$ is not twice differentiable.
+
+\begin{definition}[Weak Solution]
+A function $u \in \Hz(\Omega)$ is a \textbf{weak solution} of $-\Delta u = f$ with $u=0$ on $\partial\Omega$ if
+\[
+\int_\Omega \nabla u \cdot \nabla \varphi \dx = \int_\Omega f\varphi \dx
+\quad \forall \varphi \in C_0^\infty(\Omega).
+\]
+\end{definition}
+
+\textbf{Key idea:} Derivatives are transferred from $u$ to the test function $\varphi$. This allows solutions when $u$ lacks classical second derivatives and when $f$ is only in $L^2(\Omega)$ or even $\Hm(\Omega)$.
+
+\subsection{The Dual Space $H^{-1}(\Omega)$}
+\begin{definition}
+The space $\Hm(\Omega)$ is the dual space of $\Hz(\Omega)$:
+\[
+\Hm(\Omega) = \big( \Hz(\Omega) \big)^*.
+\]
+Its elements are continuous linear functionals on $\Hz(\Omega)$.
+\end{definition}
+
+\begin{remark}[Interpretation]
+\begin{align*}
+\bullet\;& \text{Elements of } \Hm(\Omega) \text{ are distributions that act continuously on } \Hz(\Omega).\\
+\bullet\;& \text{The negative index indicates that } H^{-1} \text{ functions are ``one derivative less regular'' than } L^2.\\
+\bullet\;& -\Delta : \Hz(\Omega) \to \Hm(\Omega) \text{ is the natural mapping of the Laplacian}.\\
+\bullet\;& \text{In the weak formulation, it is natural to allow } f \in \Hm(\Omega).
+\end{align*}
+\end{remark}
+
+
+\textbf{Key takeaway:} $\Hm(\Omega)$ is the natural space for the right-hand side $f$ in the weak formulation of second-order elliptic equations, ensuring the formulation remains well-defined even for irregular data.
+
+\end{document}

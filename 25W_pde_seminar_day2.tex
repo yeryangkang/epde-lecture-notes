@@ -1,0 +1,329 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{amsmath, amssymb, amsthm, mathrsfs}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small PDE Seminar 25W}
+\rhead{\small Foundations of Elliptic Theory}
+\cfoot{\thepage}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+
+
+\title{PDE Seminar: Day 2 \\ Energy Methods}
+\author{Yeryang Kang}
+\date{February 2, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    This document serves as an extended reference for the second day of the 25W PDE Seminar. It provides a descriptive analysis of the four pillars of elliptic theory: (1) The structural definition of Ellipticity, (2) Variational techniques via Energy Methods, (3) Geometric control via Maximum Principles, and (4) Fine regularity via H\"older Spaces. We integrate perspectives from standard texts---Evans, Gilbarg-Trudinger (GT), and Han-Lin---to bridge the gap between weak and classical solutions.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+
+\section{Elliptic Operators and Ellipticity}
+\label{sec:ellipticity}
+\textit{Primary Reference: L.C. Evans, Partial Differential Equations, Chapter 6.1.}
+
+The study of elliptic partial differential equations (PDEs) is essentially the generalization of the Laplace equation, $\Delta u = 0$, to operators with variable coefficients. In this section, we define the operators rigorously and discuss the physical and mathematical implications of "ellipticity."
+
+\subsection{Divergence vs. Non-Divergence Form}
+Second-order linear operators typically appear in two distinct forms, each suited to different analytical techniques.
+
+\begin{definition}[General Linear Operator (negative signature representation)]
+    Let $\Omega \subset \mathbb{R}^n$ be an open, connected set.
+    \begin{enumerate}
+        \item \textbf{Divergence Form:} Useful for integration by parts and energy methods (weak solutions).
+        \begin{equation}
+            Lu = -\sum_{i,j=1}^n (a^{ij}(x) u_{x_i})_{x_j} + \sum_{i=1}^n b^i(x) u_{x_i} + c(x)u.
+        \end{equation}
+        \item \textbf{Non-Divergence Form:} Useful for maximum principles and classical regularity (strong solutions).
+        \begin{equation}
+            Lu = -\sum_{i,j=1}^n a^{ij}(x) u_{x_i x_j} + \sum_{i=1}^n b^i(x) u_{x_i} + c(x)u.
+        \end{equation}
+    \end{enumerate}
+    We assume the symmetry condition $a^{ij} = a^{ji}$.
+\end{definition}
+
+\begin{remark}[Equivalence]
+    If the coefficients $a^{ij}$ are differentiable ($C^1$), one can convert between forms using the product rule: $(a^{ij}u_{x_i})_{x_j} = a^{ij}u_{x_i x_j} + (a^{ij})_{x_j}u_{x_i}$. However, if $a^{ij} \in L^\infty$ (potentially discontinuous), the divergence form is the only meaningful formulation, as the classical non-divergence operator is ill-defined.
+\end{remark}
+
+\subsection{Uniform Ellipticity}
+The core structural assumption is that the operator "looks like" the Laplacian at every point.
+
+\begin{definition}[Uniform Ellipticity]
+    The operator $L$ is \textbf{uniformly elliptic} if there exists a constant $\theta > 0$ such that for almost every $x \in \Omega$ and all vectors $\xi \in \mathbb{R}^n$,
+    \begin{equation} \label{eq:ellipticity}
+        \sum_{i,j=1}^n a^{ij}(x) \xi_i \xi_j \ge \theta |\xi|^2.
+    \end{equation}
+\end{definition}
+
+\subsubsection{Physical Interpretation}
+Consider the heat diffusion or electrostatic potential. The matrix $A = (a^{ij})$ represents the \textbf{conductivity} of the medium.
+\begin{itemize}
+    \item Condition \eqref{eq:ellipticity} ensures that the medium is conductive in \textit{all} directions. There is no direction $\xi$ in which diffusion is blocked (which would lead to a degenerate parabolic equation) or reversed (which would lead to a hyperbolic equation).
+    \item The constant $\theta$ represents the minimum conductivity. "Uniform" means this minimum does not vanish as we move across the domain $\Omega$.
+\end{itemize}
+
+
+\section{Energy Methods and Functional Analysis}
+\label{sec:energy}
+\textit{Primary Reference: L.C. Evans, Partial Differential Equations, Chapter 6.2.}
+
+Classical methods fail when coefficients are not smooth (e.g., composite materials where conductivity jumps). Energy methods replace pointwise derivatives with integral averages, leveraging the structure of Hilbert spaces ($L^2, H^1$).
+
+\subsection{Derivation of the Weak Formulation}
+Suppose we want to solve the Dirichlet problem:
+\[ \begin{cases} Lu = f & \text{in } \Omega \\ u = 0 & \text{on } \partial\Omega \end{cases} \]
+Multiplying by a test function $v \in C^\infty_c(\Omega)$ and integrating by parts (moving one derivative from $u$ to $v$) leads to the equation:
+\begin{equation}
+    \int_\Omega \sum_{i,j} a^{ij} u_{x_i} v_{x_j} + \sum_i b^i u_{x_i} v + cuv \, dx = \int_\Omega fv \, dx.
+\end{equation}
+This integral makes sense even if $u$ is only once differentiable. This motivates the definition of the Sobolev space $H^1_0(\Omega)$, the closure of $C^\infty_c$ under the norm $\|u\|_{H^1}^2 = \int (|Du|^2 + |u|^2)$.
+
+\subsection{The Bilinear Form and Coercivity}
+We define the bilinear form $B: H^1_0(\Omega) \times H^1_0(\Omega) \to \mathbb{R}$ corresponding to $L$:
+\[ B[u,v] := \int_\Omega (a^{ij} D_i u D_j v + b^i D_i u v + cuv) dx. \]
+
+The crux of the energy method is \textbf{G{\aa}rding's Inequality}, which states that elliptic operators are "positive definite up to a shift."
+\begin{theorem}[Energy Estimate]
+    There exist constants $\beta > 0$ and $\gamma \ge 0$ such that
+    \begin{equation}
+        B[u,u] \ge \beta \|u\|_{H^1_0}^2 - \gamma \|u\|_{L^2}^2 \quad \text{for all } u \in H^1_0(\Omega).
+    \end{equation}
+\end{theorem}
+\textit{Idea of Proof:} The principal term $a^{ij}D_i u D_j u$ gives $\theta \int |Du|^2$ by ellipticity. The lower order terms ($b^i, c$) can be bounded by $\epsilon \int |Du|^2 + C_\epsilon \int u^2$ using Cauchy-Schwarz and Young's inequality. Choosing $\epsilon$ small enough allows the gradient term to dominate.
+
+\begin{proof}[Detailed Proof]
+    By the uniform ellipticity condition, we have $\sum a^{ij} \xi_i \xi_j \ge \theta |\xi|^2$. Thus,
+    \[ \int_\Omega \sum a^{ij} u_{x_i} u_{x_j} \, dx \ge \theta \int_\Omega |Du|^2 \, dx. \]
+    Now we handle the lower order terms. Let $M = \max_i \|b^i\|_{L^\infty}$ and $K = \|c\|_{L^\infty}$.
+    Using Cauchy-Schwarz and Young's inequality with $\epsilon$ ($|ab| \le \epsilon a^2 + \frac{1}{4\epsilon}b^2$):
+    \begin{align*}
+        \left| \int_\Omega \sum b^i u_{x_i} u \, dx \right| &\le \int_\Omega \sum |b^i| |Du| |u| \, dx \\
+        &\le M \int_\Omega \left( \epsilon |Du|^2 + \frac{1}{4\epsilon} u^2 \right) dx.
+    \end{align*}
+    Similarly, $| \int c u^2 | \le K \int u^2$.
+    Combining these estimates into $B[u,u]$:
+    \[ B[u,u] \ge \theta \|Du\|_{L^2}^2 - M\epsilon \|Du\|_{L^2}^2 - \left( \frac{M}{4\epsilon} + K \right) \|u\|_{L^2}^2. \]
+    We choose $\epsilon = \frac{\theta}{2M}$ to absorb the gradient term. Then $\theta - M\epsilon = \frac{\theta}{2}$.
+    \[ B[u,u] \ge \frac{\theta}{2} \|Du\|_{L^2}^2 - C \|u\|_{L^2}^2. \]
+    Since $u \in H^1_0(\Omega)$, the norm is $\|u\|_{H^1}^2 = \|Du\|_{L^2}^2 + \|u\|_{L^2}^2$. Thus $\|Du\|_{L^2}^2 = \|u\|_{H^1}^2 - \|u\|_{L^2}^2$. Substituting this yields:
+    \[ B[u,u] \ge \frac{\theta}{2} \|u\|_{H^1}^2 - \left( \frac{\theta}{2} + C \right) \|u\|_{L^2}^2. \]
+    Setting $\beta = \theta/2$ and $\gamma = \theta/2 + C$ completes the proof.
+\end{proof}
+
+\subsection{Lax-Milgram Theorem: Existence}
+The Lax-Milgram theorem is the "Fundamental Theorem of Linear Algebra" for infinite-dimensional Hilbert spaces.
+
+\begin{theorem}[Lax-Milgram]
+    Let $H$ be a real Hilbert space and $B: H \times H \to \mathbb{R}$ be a bilinear form that is:
+    \begin{enumerate}
+        \item \textbf{Bounded:} $|B[u,v]| \le \alpha \|u\|\|v\|$,
+        \item \textbf{Coercive:} $B[u,u] \ge \beta \|u\|^2$.
+    \end{enumerate}
+    Then for any $f \in H^*$, there exists a unique $u \in H$ such that $B[u,v] = \langle f, v \rangle$ for all $v \in H$.
+\end{theorem}
+
+\begin{proof}[Detailed Proof]
+    Since $B$ is not necessarily symmetric, we cannot use the Riesz Representation Theorem directly on $B$. Instead, we use Riesz to define an operator.
+    
+    \textbf{1. Construction of Operator $A$:}
+    For a fixed $u \in H$, the map $v \mapsto B[u,v]$ is a bounded linear functional on $H$. By the Riesz Representation Theorem, there exists a unique element $w \in H$ such that $(w,v)_H = B[u,v]$ for all $v$. We define $Au = w$. This defines a linear operator $A: H \to H$ satisfying:
+    \[ (Au, v)_H = B[u,v]. \]
+    From the boundedness of $B$, $\|Au\| \le \alpha \|u\|$, so $A$ is bounded.
+    Similarly, let $w_f$ be the Riesz representative of the functional $f$ (i.e., $(w_f, v) = \langle f, v \rangle$). The problem $B[u,v] = \langle f, v \rangle$ becomes equivalent to solving the operator equation $Au = w_f$.
+    
+    \textbf{2. Injectivity and Closed Range:}
+    By coercivity, $\beta \|u\|^2 \le B[u,u] = (Au, u) \le \|Au\| \|u\|$. Thus:
+    \[ \beta \|u\| \le \|Au\|. \]
+    This implies $A$ is injective ($Au=0 \implies u=0$). Furthermore, the range $R(A)$ is closed. If $Au_n \to y$, then $\{Au_n\}$ is Cauchy. By the inequality, $\{u_n\}$ is Cauchy and converges to some $u$. Thus $Au_n \to Au = y \in R(A)$.
+    
+    \textbf{3. Surjectivity:}
+    We show $R(A) = H$. Since $R(A)$ is closed, we can decompose $H = R(A) \oplus R(A)^\perp$. Let $z \in R(A)^\perp$. Then $(Az, z) = 0$. By coercivity, $\beta \|z\|^2 \le (Az, z) = 0$, implying $z=0$. Hence $R(A)^\perp = \{0\}$, and $A$ is surjective.
+    
+    Since $A$ is bijective, there exists a unique $u$ such that $Au = w_f$.
+\end{proof}
+
+\begin{remark}[From Estimates to Existence]
+    If $\gamma=0$ in G{\aa}rding's inequality (e.g., if $c \ge 0$ and $b^i=0$), then $B$ is strictly coercive. Lax-Milgram immediately guarantees a unique weak solution $u \in H^1_0(\Omega)$. If $\gamma > 0$, we rely on the \textit{Fredholm Alternative}: either a unique solution exists, or the homogeneous problem has a non-trivial solution (eigenfunctions).
+\end{remark}
+
+
+\section{Maximum Principles}
+\label{sec:max_principles}
+\textit{Primary Reference: Q. Han \& F. Lin, Elliptic PDEs, Chapter 2.}
+
+While Energy Methods operate globally (integrals), Maximum Principles operate locally (pointwise values). They exploit the convexity of solutions to elliptic equations. Here we focus on operators in non-divergence form.
+
+\subsection{The Weak Maximum Principle (positive signature representation)}
+The intuition comes from 1D calculus: if $u''(x) > 0$, the function is convex and cannot have an interior maximum.
+
+\begin{theorem}[Weak Maximum Principle]
+    Let $u \in C^2(\Omega) \cap C^0(\bar{\Omega})$ satisfy $Lu \ge 0$ (subsolution) in $\Omega$, with $c(x) \le 0$. Then:
+    \begin{equation}
+        \sup_\Omega u \le \sup_{\partial \Omega} u^+.
+    \end{equation}
+\end{theorem}
+
+\textbf{Proof Strategy (Barrier Method):}
+\begin{enumerate}
+    \item First, assume strict inequality $Lu > 0$. At an interior maximum $x_0$, we must have $D^2 u$ negative semi-definite ($a^{ij}D_{ij}u \le 0$) and $Du=0$. Thus $Lu \le c(x_0)u(x_0)$. If $c=0$, this contradicts $Lu > 0$.
+    \item For the general case $Lu \ge 0$, we introduce a perturbation $v_\epsilon(x) = u(x) + \epsilon e^{\lambda x_1}$ for sufficiently large $\lambda$. One shows $Lv_\epsilon > 0$, applies step 1, and lets $\epsilon \to 0$.
+\end{enumerate}
+
+\begin{proof}[Detailed Proof]
+    \textbf{Case 1: The Strict Case ($Lu > 0$).}
+    Suppose for contradiction that $u$ attains a maximum at an interior point $x_0 \in \Omega$ such that $u(x_0) = \max_{\bar{\Omega}} u > \max_{\partial \Omega} u^+ \ge 0$.
+    At this maximum point $x_0$:
+    \begin{itemize}
+        \item $Du(x_0) = 0$.
+        \item The Hessian matrix $D^2u(x_0)$ is negative semi-definite. Since $A=(a^{ij})$ is positive definite, the trace $\text{tr}(A D^2u) = \sum a^{ij}D_{ij}u \le 0$.
+    \end{itemize}
+    Substituting these into the operator:
+    \[ Lu(x_0) = \sum a^{ij}D_{ij}u(x_0) + \sum b^i D_i u(x_0) + c(x_0)u(x_0) \le 0 + 0 + c(x_0)u(x_0). \]
+    Since $c \le 0$ and $u(x_0) > 0$, we have $c(x_0)u(x_0) \le 0$. Thus $Lu(x_0) \le 0$, which contradicts the assumption $Lu > 0$. Therefore, the maximum cannot be interior.
+
+    \textbf{Case 2: The General Case ($Lu \ge 0$).}
+    Let $u_\epsilon(x) = u(x) + \epsilon e^{\lambda x_1}$ for $\epsilon > 0, \lambda > 0$.
+    We compute $L(e^{\lambda x_1})$. Since $D_1 (e^{\lambda x_1}) = \lambda e^{\lambda x_1}$ and $D_{11} (e^{\lambda x_1}) = \lambda^2 e^{\lambda x_1}$:
+    \[ L(e^{\lambda x_1}) = e^{\lambda x_1} ( a^{11}\lambda^2 + b^1 \lambda + c ). \]
+    By ellipticity, $a^{11} \ge \theta$. We can choose $\lambda$ large enough so that $\theta \lambda^2$ dominates the $b^1 \lambda$ and $c$ terms, making $L(e^{\lambda x_1}) > 0$.
+    Then $L u_\epsilon = Lu + \epsilon L(e^{\lambda x_1}) > 0$.
+    By Case 1, $\sup_\Omega u_\epsilon = \sup_{\partial \Omega} u_\epsilon$.
+    Letting $\epsilon \to 0$, we conclude $\sup_\Omega u \le \sup_{\partial \Omega} u^+$.
+\end{proof}
+
+\subsection{Hopf Lemma and Strong Maximum Principle}
+The Weak Maximum Principle does not rule out the possibility that the maximum is achieved \textit{both} inside and on the boundary (e.g., a constant function). The Strong Principle says non-constant solutions \textit{never} achieve an interior maximum.
+
+The bridge between interior and boundary behavior is the \textbf{Hopf Lemma}.
+
+\begin{lemma}[Hopf Boundary Point Lemma]
+    Suppose $Lu \ge 0$ and $x_0 \in \partial \Omega$ is a strict maximum point (i.e., $u(x_0) > u(x)$ for interior $x$). Assume $\Omega$ satisfies the \textit{interior sphere condition} at $x_0$. Then:
+    \begin{equation}
+        \frac{\partial u}{\partial \nu}(x_0) > 0.
+    \end{equation}
+\end{lemma}
+\textit{Interpretation:} The solution must approach the maximum on the boundary with a strictly positive slope. It cannot "flatten out" tangentially.
+
+\begin{proof}[Detailed Proof]
+    Assume without loss of generality that the interior sphere $B$ is centered at the origin with radius $R$, touching $\partial \Omega$ at $x_0$. Let $A$ be the annulus $B_R(0) \setminus B_{R/2}(0)$.
+    We construct a barrier function $h(x) = e^{-\alpha |x|^2} - e^{-\alpha R^2}$.
+    Note that $h(x) = 0$ on $|x|=R$ (the boundary containing $x_0$) and $h(x) > 0$ inside.
+    A calculation similar to the Weak Maximum Principle proof shows that for $\alpha$ sufficiently large, $Lh > 0$ in the annulus $A$.
+    
+    Consider $v(x) = u(x) - u(x_0) + \epsilon h(x)$.
+    \begin{itemize}
+        \item On the outer boundary $|x|=R$: $v(x) = u(x_0) - u(x_0) + 0 = 0$.
+        \item On the inner boundary $|x|=R/2$: $u(x) - u(x_0) \le -\delta < 0$ (since $x_0$ is a strict max). We choose $\epsilon$ small enough so $\epsilon h \le \delta$. Then $v \le 0$.
+        \item In the interior of $A$: $Lv = Lu - c u(x_0) + \epsilon Lh \ge 0 - 0 + \text{positive} > 0$.
+    \end{itemize}
+    By the Weak Maximum Principle applied to $v$, we have $v \le 0$ in $A$.
+    Since $v(x_0)=0$, the outward normal derivative at $x_0$ must be non-negative:
+    \[ \frac{\partial v}{\partial \nu}(x_0) \ge 0 \implies \frac{\partial u}{\partial \nu}(x_0) + \epsilon \frac{\partial h}{\partial \nu}(x_0) \ge 0. \]
+    Calculation shows $\frac{\partial h}{\partial \nu}(x_0) = -2\alpha R e^{-\alpha R^2} < 0$.
+    Thus $\frac{\partial u}{\partial \nu}(x_0) \ge -\epsilon \frac{\partial h}{\partial \nu}(x_0) > 0$.
+\end{proof}
+
+\begin{theorem}[Strong Maximum Principle (positive signature representation)]
+    If $Lu \ge 0$ in a connected domain $\Omega$ and $u$ attains a global maximum at an interior point, then $u$ is constant.
+\end{theorem}
+\textbf{Proof Strategy:} If the set where $u$ attains its maximum is neither empty nor the whole domain, we can find a point on the boundary of this set strictly inside $\Omega$. Applying the Hopf Lemma on a small ball touching this point leads to a contradiction.
+
+\begin{proof}[Detailed Proof]
+    Let $M = \sup_\Omega u$. Define the set $\Sigma = \{ x \in \Omega : u(x) = M \}$.
+    Since $u$ is continuous, $\Sigma$ is closed in $\Omega$.
+    Suppose $\Sigma \neq \Omega$. Since $\Omega$ is connected, the boundary $\partial \Sigma \cap \Omega$ is non-empty.
+    Let $y \in \Omega \setminus \Sigma$ be a point closer to $\Sigma$ than to $\partial \Omega$. We can expand a ball centered at $y$ until it just touches $\Sigma$ at some point $x_0 \in \Sigma$.
+    Let $B$ be this ball. Then $u(x) < M$ for all $x \in B$ and $u(x_0) = M$.
+    This satisfies the conditions for the Hopf Lemma at $x_0$ (with $B$ as the interior sphere).
+    Therefore, $\frac{\partial u}{\partial \nu}(x_0) > 0$.
+    However, since $x_0$ is an interior maximum point of $\Omega$, we must have $Du(x_0) = 0$, which implies $\frac{\partial u}{\partial \nu}(x_0) = 0$.
+    This is a contradiction. Thus, $\Sigma = \Omega$, meaning $u \equiv M$ everywhere.
+\end{proof}
+
+
+\section{H\"older Spaces ($C^{k,\alpha}$)}
+\label{sec:holder}
+\textit{Primary Reference: D. Gilbarg \& N.S. Trudinger, Elliptic PDEs of Second Order, Chapter 4.}
+
+We now turn to the regularity of solutions. A fundamental issue in PDE theory is that the space of continuous functions $C^0$ is not well-adapted to elliptic operators. If $\Delta u = f$ with $f \in C^0$, it is \textit{not} guaranteed that $u \in C^2$. The second derivatives may verify the equation almost everywhere but fail to be continuous.
+
+To fix this, we need slightly more regularity: H\"older continuity.
+
+\subsection{Definitions and Norms}
+\begin{definition}[H\"older Continuity]
+    A function $u$ is H\"older continuous with exponent $\alpha \in (0,1]$ at $x_0$ if:
+    \[ \sup_{x \in \Omega} \frac{|u(x) - u(x_0)|}{|x - x_0|^\alpha} < \infty. \]
+    It is uniformly H\"older continuous if the constant is independent of $x_0$.
+\end{definition}
+
+We define the H\"older seminorm and the full norm for the space $C^{k,\alpha}(\bar{\Omega})$:
+\begin{align}
+    [u]_{k,\alpha} &= \sum_{|\beta|=k} \sup_{x \neq y} \frac{|D^\beta u(x) - D^\beta u(y)|}{|x - y|^\alpha}, \\
+    \|u\|_{C^{k,\alpha}} &= \|u\|_{C^k} + [u]_{k,\alpha}.
+\end{align}
+
+\subsection{Why H\"older Spaces?}
+\begin{enumerate}
+    \item \textbf{Optimal Regularity:} If $f \in C^{0,\alpha}$, then $u \in C^{2,\alpha}$. The fractional order $\alpha$ is preserved from the data to the second derivatives of the solution.
+    \item \textbf{Compactness:} By the Arzel\`a-Ascoli theorem, a bounded sequence in $C^{k,\alpha}$ has a convergent subsequence in $C^k$ (and in $C^{k,\beta}$ for $\beta < \alpha$). This is crucial for existence proofs.
+\end{enumerate}
+
+\subsection{Interpolation Inequalities}
+A powerful technical tool in GT (Chapter 6) is the ability to bound intermediate derivatives.
+\begin{proposition}[Global Interpolation]
+    For any $\epsilon > 0$, there exists a constant $C(\epsilon)$ such that:
+    \[ \|u\|_{C^1} \le \epsilon \|u\|_{C^2} + C(\epsilon) \|u\|_{C^0}. \]
+    More generally, intermediate norms ($C^{1,\alpha}$) can be interpolated between higher ($C^{2,\alpha}$) and lower ($C^0$) norms.
+\end{proposition}
+This allows us to treat lower-order terms ($b^i D_i u + cu$) as "perturbations." Since we can make their contribution arbitrarily small (by choosing $\epsilon$), they do not destroy the invertability (solvability of the PDE) governed by the principal part $a^{ij}D_{ij}u$. 
+
+\subsection{The Schauder Estimates}
+The Schauder estimates are a priori inequalities that bound the solution's norm by the data's norm.
+
+\begin{theorem}[Interior Schauder Estimate]
+    Let $u \in C^{2,\alpha}(\Omega)$ be a solution to $Lu = f$, with coefficients in $C^{0,\alpha}$. Then for any subdomain $\Omega' \subset\subset \Omega$:
+    \begin{equation}
+        \|u\|_{C^{2,\alpha}(\Omega')} \le C \left( \|f\|_{C^{0,\alpha}(\Omega)} + \|u\|_{C^0(\Omega)} \right).
+    \end{equation}
+    The constant $C$ depends only on the ellipticity constant $\theta$, the $C^{0,\alpha}$ norms of the coefficients, and the distance from $\Omega'$ to $\partial\Omega$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof generalizes the regularity theory of the Laplacian to variable coefficient operators via the \textbf{"Freezing of Coefficients"} technique.
+\begin{enumerate}
+    \item \textbf{Base Case (Constant Coefficients):} We assume the estimate holds for operators with constant coefficients (e.g., $L_0 = \sum a_{ij}(x_0) D_{ij}$). This is derived from the Newtonian potential theory.
+    \item \textbf{Localization:} We focus on a small ball $B_r(x_0)$ inside the domain using a smooth cutoff function $\eta$.
+    \item \textbf{Perturbation:} Inside this small ball, the variable coefficients $a_{ij}(x)$ deviate very little from the constant value $a_{ij}(x_0)$. We treat the difference $(L - L_0)u$ as a small perturbation error.
+    \item \textbf{Absorption:} We show that the "error" terms can be absorbed into the left-hand side of the inequality because their norm is proportional to the small radius $r^\alpha$.
+    \item \textbf{Interpolation:} Finally, we use interpolation inequalities to control intermediate derivatives (like $\nabla u$) using only the highest derivatives ($D^2 u$) and the function value ($u$).
+\end{enumerate}
+\end{proof}
+
+
+\end{document}

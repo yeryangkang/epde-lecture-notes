@@ -1,0 +1,184 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\geometry{left=25mm, right=25mm, top=30mm, bottom=30mm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{PDE Seminar: Day 4 \\ Schauder Estimates}
+\author{Yeryang Kang}
+\date{February 9, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview: Classical Solvability}
+In the previous section, we established the uniqueness of solutions using Maximum Principles. Now, we address the question of "existence" and "regularity" for the Dirichlet problem:
+\begin{equation} \label{eq:dirichlet}
+    \begin{cases}
+    Lu = f & \text{in } \Omega \\
+    u = g & \text{on } \partial\Omega
+    \end{cases}
+\end{equation}
+
+The space $C^k$ is not complete, which implies that the limit of a sequence of $C^k$ functions may not belong to the same class. To resolve this issue, we introduce H\"older spaces. Specifically, since $C^{k,\alpha}$ lies between $C^k$ and $C^{k+1}$, the additional regularity requirement is strictly less than one full derivative; nevertheless, the functional analytic properties of the space are significantly superior to those of $C^k$. This is precisely the reason why we introduce H\"older spaces. In particular, $C^{k,\alpha}$ is a Banach space (a complete normed space).
+
+
+\section{Theorem 3.4: Schauder Estimates}
+
+The Schauder estimates are \textit{a priori} estimates that bound the $C^{2,\alpha}$ norm of the solution by the $C^{0,\alpha}$ norm of the source term $f$.
+
+\begin{theorem}[6.2. Schauder Estimates]
+Let $u \in C^{2,\alpha}(\Omega)$ satisfy $Lu = f$ with $f \in C^\alpha$. Under uniform ellipticity and $C^\alpha$ bounds on coefficients:
+\begin{equation}
+    |u|^*_{2,\alpha;\Omega} \leq C(|u|_{0;\Omega} + |f|^{(2)}_{0,\alpha;\Omega})
+\end{equation}
+where $C = C(n, \alpha, \lambda, \Lambda)$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+The proof generalizes the regularity theory of the Laplacian to variable coefficient operators via the \textbf{"Freezing of Coefficients"} technique.
+\begin{enumerate}
+    \item \textbf{Base Case (Constant Coefficients):} We assume the estimate holds for operators with constant coefficients (e.g., $L_0 = \sum a_{ij}(x_0) D_{ij}$). This is derived from the Newtonian potential theory.
+    \item \textbf{Localization:} We focus on a small ball $B_r(x_0)$ inside the domain using a smooth cutoff function $\eta$.
+    \item \textbf{Perturbation:} Inside this small ball, the variable coefficients $a_{ij}(x)$ deviate very little from the constant value $a_{ij}(x_0)$. We treat the difference $(L - L_0)u$ as a small perturbation error.
+    \item \textbf{Absorption:} We show that the "error" terms can be absorbed into the left-hand side of the inequality because their norm is proportional to the small radius $r^\alpha$.
+    \item \textbf{Interpolation:} Finally, we use interpolation inequalities to control intermediate derivatives (like $\nabla u$) using only the highest derivatives ($D^2 u$) and the function value ($u$).
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[Detailed Proof (Simplified)]
+We proceed in four clear steps: Localization, Freezing, Estimation, and Absorption.
+
+\textbf{Step 1: Localization.}
+Fix a point $x_0 \in \Omega'$ and choose a radius $r$ small enough so that the ball $B_r(x_0) \subset \Omega$.
+Let $\eta \in C_c^\infty(B_r)$ be a cutoff function such that $\eta \equiv 1$ in $B_{r/2}$ and $0 \le \eta \le 1$.
+Define $v = \eta u$. Note that $v = u$ in the smaller ball $B_{r/2}$.
+
+\textbf{Step 2: Freezing the Coefficients.}
+We compare the operator $L$ (with variable coefficients $a_{ij}(x)$) to the "frozen" operator $L_0$ (with constant coefficients $a_{ij}(x_0)$):
+\begin{equation*}
+    L_0 = \sum_{i,j} a_{ij}(x_0) D_{ij}.
+\end{equation*}
+We want to apply the known Schauder estimate for $L_0$ to $v$. Let's compute $L_0 v$:
+\begin{align*}
+    L_0 v &= L_0(\eta u) \\
+          &= \eta L_0 u + \text{Commutators involving } \nabla\eta, \nabla u \dots \\
+          &= \eta (L_0 - L)u + \eta Lu + \text{Lower Order Terms}.
+\end{align*}
+Since $Lu = f$, we can rearrange this as:
+\begin{equation} \label{eq:frozen}
+    L_0 v = \eta f + \eta \sum_{i,j} (a_{ij}(x_0) - a_{ij}(x)) D_{ij} u + \text{LOT},
+\end{equation}
+where $\text{LOT}$ (Lower Order Terms) contains terms with $D u$ and $u$, which are "easier" to bound.
+
+\textbf{Step 3: Applying the Constant Coefficient Estimate.}
+We apply the standard Schauder estimate for constant coefficients to equation (\ref{eq:frozen}):
+\begin{equation*}
+    \|v\|_{C^{2,\alpha}} \le C \left( \| \text{RHS of } (\ref{eq:frozen}) \|_{C^{0,\alpha}} \right).
+\end{equation*}
+Let's analyze the critical term on the RHS: $E = \eta \sum (a_{ij}(x_0) - a_{ij}(x)) D_{ij} u$.
+The $C^{0,\alpha}$ norm of a product roughly satisfies $\|gh\|_\alpha \le \|g\|_\alpha \|h\|_\infty + \|g\|_\infty \|h\|_\alpha$.
+The key insight is that on the support of $\eta$ (which is $B_r$), the difference in coefficients is small:
+\begin{equation*}
+    |a_{ij}(x_0) - a_{ij}(x)| \le [a_{ij}]_\alpha |x_0 - x|^\alpha \le [a_{ij}]_\alpha r^\alpha.
+\end{equation*}
+Thus, the norm of the error term is bounded by:
+\begin{equation*}
+    \|E\|_{C^{0,\alpha}} \le C r^\alpha \|u\|_{C^{2,\alpha}(B_r)} + C_r \|u\|_{C^2(B_r)}.
+\end{equation*}
+
+\textbf{Step 4: Absorption and Conclusion.}
+Substituting the bound for $E$ back into the main estimate:
+\begin{equation*}
+    \|u\|_{C^{2,\alpha}(B_{r/2})} \le \|v\|_{C^{2,\alpha}} \le C \left( \|f\|_{C^{0,\alpha}} + r^\alpha \|u\|_{C^{2,\alpha}(B_r)} + C_r \|u\|_{C^1} \right).
+\end{equation*}
+Notice that $\|u\|_{C^{2,\alpha}}$ appears on the Right-Hand Side. However, it is multiplied by $r^\alpha$. By choosing the radius $r$ \textbf{sufficiently small} (depending on the ellipticity and coefficients), we can ensure $C r^\alpha \le 1/2$.
+We can then subtract this term to the Left-Hand Side ("absorbing" the highest order term):
+\begin{equation*}
+    \frac{1}{2} \|u\|_{C^{2,\alpha}(B_{r/2})} \le C \left( \|f\|_{C^{0,\alpha}} + \|u\|_{C^1(B_r)} \right).
+\end{equation*}
+Finally, using the interpolation inequality $\|u\|_{C^1} \le \epsilon \|u\|_{C^{2,\alpha}} + C_\epsilon \|u\|_{C^0}$ to handle the lower order terms, and covering the compact set $\Omega'$ with finitely many such small balls, we arrive at the desired result:
+\begin{equation*}
+    \|u\|_{C^{2,\alpha}(\Omega')} \le C \left( \|f\|_{C^{0,\alpha}(\Omega)} + \|u\|_{C^0(\Omega)} \right).
+\end{equation*}
+\end{proof}
+
+
+
+\section{Theorem 3.5: Method of Continuity}
+
+Schauder estimates provide a bound "if" a solution exists. The Method of Continuity uses this bound to prove that a solution "actually" exists.
+
+\begin{theorem}[Method of Continuity] \label{thm:continuity}
+Let $\Omega$ be $C^{2,\alpha}$ and $L$ be strictly elliptic with $c \le 0$. If the Dirichlet problem for $\Delta$ is solvable for all $C^\alpha$ data, then $Lu = f, u = \varphi$ is uniquely solvable in $C^{2,\alpha}(\overline{\Omega})$.
+\end{theorem}
+
+\begin{proof}[Sketch of Proof]
+Define a family of operators $L_t = (1-t)\Delta + tL$. 
+\begin{enumerate}
+    \item Let $E = \{t \in [0,1] : L_t u = f \text{ is solvable}\}$. 
+    \item $0 \in E$ by assumption. $E$ is shown to be open via the Inverse Function Theorem (or Banach Fixed Point Theorem).
+    \item $E$ is shown to be closed using the a priori Schauder estimates to pass to the limit. Thus $1 \in E$.
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+
+\begin{proof}[Detailed Proof]
+The proof relies on establishing estimates for the Laplacian (Model Case) and extending the result to general operators using the Method of Continuity.
+
+\textbf{Step 1: The Model Case ($\Delta u = f$).}
+The solution is represented by the Newtonian potential $u = N * f$. The crucial difficulty is that the kernel for the second derivatives, $D^2 N(z)$, behaves like $|z|^{-n}$, which is not integrable near the origin.
+However, we exploit the H\"older continuity of $f$. We can express the second derivative roughly as:
+\begin{equation*}
+    D^2 u(x) \sim \int_{\mathbb{R}^n} D^2 N(x-y) \left( f(y) - f(x) \right) \, dy.
+\end{equation*}
+Since $f \in C^{0,\alpha}$, the difference term provides a decay factor: $|f(y) - f(x)| \le C |x-y|^\alpha$.
+Multiplying the singularity $|x-y|^{-n}$ by this factor yields $|x-y|^{-n+\alpha}$. Since $-n+\alpha > -n$, this new kernel \textit{is} locally integrable. This "cancellation of singularity" ensures that $D^2 u$ exists and belongs to $C^{0,\alpha}$.
+
+\textbf{Step 2: The Method of Continuity.}
+We connect the Laplacian to the general operator $L$ using the family $L_t = (1-t)\Delta + tL$ for $t \in [0,1]$. Let $E$ be the set of $t$ for which $L_t u = f$ is solvable.
+\begin{itemize}
+    \item \textbf{Non-empty ($0 \in E$):} We know the Laplacian ($t=0$) is solvable from Step 1.
+    \item \textbf{Openness:} If $L_{t_0}$ is invertible, standard operator theory implies that small perturbations (nearby $t$) are also invertible. Thus, $E$ is open.
+    \item \textbf{Closedness:} This is where the Schauder estimate is vital. If a sequence $t_k \in E$ converges to $t^*$, the corresponding solutions $u_k$ satisfy the uniform bound $\|u_k\|_{C^{2,\alpha}} \le C \|f\|_{C^{0,\alpha}}$. By compactness (Arzel\`a-Ascoli), the sequence $u_k$ converges to a limit solution $u^*$, proving that $t^* \in E$.
+\end{itemize}
+Since $E$ is non-empty, open, and closed in $[0,1]$, we must have $E=[0,1]$. Therefore, the problem is solvable for $L$ (at $t=1$).
+\end{proof}
+
+
+\subsection{Why Hölder Spaces? (Proof Idea)}
+The proof is built upon the Newtonian potential for the Laplacian.
+\begin{enumerate}
+    \item \textbf{Constant Coefficients (Model Case):} Consider $\Delta u = f$. The solution is given by convolution with the fundamental solution $N(x)$:
+    \[ u(x) = \int_{\mathbb{R}^n} N(x-y) f(y) dy \]
+    Taking two derivatives yields a singular integral:
+    \[ D_{ij}u(x) = \int_{\mathbb{R}^n} D_{ij}N(x-y) f(y) dy \]
+    The kernel $D_{ij}N$ is not integrable near the singularity. However, using the Hölder condition $|f(y) - f(x)| \le K|x-y|^\alpha$, we can utilize the "cancellation of singularities" property. This ensures that $D^2 u$ exists and is Hölder continuous.
+    
+    \item \textbf{Variable Coefficients (Freezing Coefficients):} For the general operator $Lu$, we fix a point $x_0$ and rewrite the equation as:
+    \[ L_{x_0} u = f + (L_{x_0} - L)u \]
+    where $L_{x_0}$ has constant coefficients frozen at $x_0$. Since the coefficients are continuous, the error term $(L_{x_0} - L)$ is small in a small neighborhood of $x_0$. We can then view this as a perturbation of the constant coefficient case.
+\end{enumerate}
+
+
+\section{Summary of Chapter 6}
+\begin{itemize}
+    \item Schauder Estimates (Thm 3.4): Provide the necessary \textit{a priori} bounds ($C^{2,\alpha}$ control).
+    \item Method of Continuity (Thm 3.5): Converts these bounds into an existence proof by deforming a known operator (Laplacian) into the target operator.
+    \item This establishes the "Classical Existence Theory" for elliptic PDEs.
+\end{itemize}
+
+\end{document}
